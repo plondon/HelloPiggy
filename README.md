@@ -1,4 +1,4 @@
 Todo
 
-- [] Install firebase
-- [] Save user to database
+- [ ] Install firebase
+- [ ] Save user to database
