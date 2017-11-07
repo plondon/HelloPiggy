@@ -3,19 +3,29 @@ import { View, Text, StyleSheet, TouchableHighlight, ActivityIndicator } from 'r
 const FBSDK = require('react-native-fbsdk');
 const {
   LoginButton,
-  AccessToken
+  AccessToken,
+  GraphRequest,
+  GraphRequestManager
 } = FBSDK;
 
 export default class Auth extends React.Component {
   constructor() {
     super();
   }
+  
+  _responseInfoCallback(error: ?Object, result: ?Object) {
+    if (error) {
+      alert('Error fetching data: ' + error.toString());
+    } else {
+      alert(result.email);
+    }
+  }
 
   render() {
     return (
-      <View>
+      <View style={styles.container}>
         <LoginButton
-          publishPermissions={["publish_actions"]}
+          readPermissions={['email', 'public_profile']}
           onLoginFinished={
             (error, result) => {
               if (error) {
@@ -23,11 +33,15 @@ export default class Auth extends React.Component {
               } else if (result.isCancelled) {
                 alert("login is cancelled.");
               } else {
-                AccessToken.getCurrentAccessToken().then(
-                  (data) => {
-                    alert(data.accessToken.toString())
-                  }
-                )
+                AccessToken.getCurrentAccessToken().then(() => {
+                  const infoRequest = new GraphRequest(
+                    '/me?fields=email',
+                    null,
+                    this._responseInfoCallback
+                  );
+                  // Start the graph request.
+                  new GraphRequestManager().addRequest(infoRequest).start();
+                });
               }
             }
           }
@@ -39,6 +53,7 @@ export default class Auth extends React.Component {
 
 const styles = StyleSheet.create({
   'container': {
-    marginTop: 40
+    marginTop: 40,
+    alignItems: 'center'
   }
 });
