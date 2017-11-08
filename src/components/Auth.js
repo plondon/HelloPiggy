@@ -1,4 +1,5 @@
 import React from 'react';
+import * as firebase from 'firebase';
 import { View, Text, StyleSheet, TouchableHighlight, ActivityIndicator } from 'react-native';
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -7,6 +8,10 @@ const {
   GraphRequest,
   GraphRequestManager
 } = FBSDK;
+
+const app = firebase.initializeApp({
+  
+});
 
 export default class Auth extends React.Component {
   constructor() {
