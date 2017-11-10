@@ -31,7 +31,7 @@ export default class Plaid extends React.Component {
         publicKey="70899249dbfcd49ba8df6af8b2df65"
         env="sandbox"
         product="auth,transactions"
-        clientName="Phil London"
+        clientName="HelloPiggy"
       />
     )
   }

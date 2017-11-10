@@ -10,7 +10,10 @@ const {
 } = FBSDK;
 
 const app = firebase.initializeApp({
-  
+  apiKey: "AIzaSyDmn2WLeDxznRUlkIIOOpYBfTFvSn0g8QQ",
+  authDomain: "hello-piggy.firebaseapp.com",
+  databaseURL: "https://hello-piggy.firebaseio.com/",
+  storageBucket: "gs://hello-piggy.appspot.com"
 });
 
 export default class Auth extends React.Component {
@@ -22,7 +25,9 @@ export default class Auth extends React.Component {
     if (error) {
       alert('Error fetching data: ' + error.toString());
     } else {
-      alert(result.email);
+      app.database().ref('users/' + result.id).set({
+        email: result.email
+      })
     }
   }
 
