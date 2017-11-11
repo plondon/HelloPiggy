@@ -16,9 +16,17 @@ const app = firebase.initializeApp({
   storageBucket: "gs://hello-piggy.appspot.com"
 });
 
+const facebookProvider = new firebase.auth.FacebookAuthProvider();
+
 export default class Auth extends React.Component {
   constructor() {
     super();
+  }
+  
+  handleLogin() {
+    firebase.auth().signInWithRedirect(facebookProvider).then((res) => {
+      debugger;
+    });
   }
   
   _responseInfoCallback(error: ?Object, result: ?Object) {
@@ -34,28 +42,9 @@ export default class Auth extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <LoginButton
-          readPermissions={['email', 'public_profile']}
-          onLoginFinished={
-            (error, result) => {
-              if (error) {
-                alert("login has error: " + result.error);
-              } else if (result.isCancelled) {
-                alert("login is cancelled.");
-              } else {
-                AccessToken.getCurrentAccessToken().then(() => {
-                  const infoRequest = new GraphRequest(
-                    '/me?fields=email',
-                    null,
-                    this._responseInfoCallback
-                  );
-                  // Start the graph request.
-                  new GraphRequestManager().addRequest(infoRequest).start();
-                });
-              }
-            }
-          }
-          onLogoutFinished={() => alert("logout.")}/>
+        <TouchableHighlight onPress={this.handleLogin}>
+          <Text>Login via Facebook</Text>
+        </TouchableHighlight>
       </View>
     );
   }
