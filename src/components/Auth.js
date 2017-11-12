@@ -1,12 +1,10 @@
 import React from 'react';
 import * as firebase from 'firebase';
-import { View, Text, StyleSheet, TouchableHighlight, ActivityIndicator } from 'react-native';
+import { Image, View, Text, StyleSheet, TouchableHighlight, ActivityIndicator } from 'react-native';
 const FBSDK = require('react-native-fbsdk');
 const {
-  LoginButton,
-  AccessToken,
-  GraphRequest,
-  GraphRequestManager
+  LoginManager,
+  AccessToken
 } = FBSDK;
 
 const app = firebase.initializeApp({
@@ -21,32 +19,55 @@ const facebookProvider = new firebase.auth.FacebookAuthProvider();
 export default class Auth extends React.Component {
   constructor() {
     super();
+    var user = firebase.auth().currentUser;
+    this.state = { user: user, activity: false }
   }
   
   handleLogin() {
-    firebase.auth().signInWithRedirect(facebookProvider).then((res) => {
-      debugger;
-    });
-  }
-  
-  _responseInfoCallback(error: ?Object, result: ?Object) {
-    if (error) {
-      alert('Error fetching data: ' + error.toString());
-    } else {
-      app.database().ref('users/' + result.id).set({
-        email: result.email
+    this.setState({ activity: true });
+    LoginManager
+      .logInWithReadPermissions(['email'])
+      .then((result) => {
+        if (result.isCancelled) {
+          return Promise.reject(new Error('The user cancelled the request'));
+        }
+        return AccessToken.getCurrentAccessToken();
       })
-    }
+      .then(data => {
+        const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
+        return firebase.auth().signInWithCredential(credential);
+      })
+      .then((currentUser) => {
+        this.setState({ user: currentUser })
+      })
+      .catch((error) => {
+        console.log(`Login fail with error: ${error}`);
+      }).finally(() => { this.setState({ activity: false }) });
   }
 
   render() {
-    return (
-      <View style={styles.container}>
-        <TouchableHighlight onPress={this.handleLogin}>
-          <Text>Login via Facebook</Text>
-        </TouchableHighlight>
-      </View>
-    );
+    const { user, activity } = this.state;
+    
+    if (activity) {
+      return (
+        <ActivityIndicator style={styles.centering} size="large"/>
+      )
+    } else {
+      return (
+        <View style={styles.container}>
+          {user ? (
+            <View>
+              <Text>{user.displayName}</Text>
+              <Image style={{width: 100, height: 100}} source={{uri: user.photoURL}} />
+            </View>
+          ) : (
+            <TouchableHighlight onPress={() => this.handleLogin()}>
+              <Text>Login via Facebook</Text>
+            </TouchableHighlight>
+          )}
+        </View>
+      );
+    }
   }
 }
 
@@ -54,5 +75,14 @@ const styles = StyleSheet.create({
   'container': {
     marginTop: 40,
     alignItems: 'center'
+  },
+  'centering': {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
