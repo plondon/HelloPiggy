@@ -20,7 +20,7 @@ export default class Auth extends React.Component {
   constructor() {
     super();
     var user = firebase.auth().currentUser;
-    this.state = { user: user, activity: false }
+    this.state = { activity: false }
   }
   
   handleLogin() {
@@ -38,15 +38,15 @@ export default class Auth extends React.Component {
         return firebase.auth().signInWithCredential(credential);
       })
       .then((currentUser) => {
-        this.setState({ user: currentUser })
+        this.props.onActiveUser(currentUser)
       })
       .catch((error) => {
         console.log(`Login fail with error: ${error}`);
-      }).finally(() => { this.setState({ activity: false }) });
+      });
   }
 
   render() {
-    const { user, activity } = this.state;
+    const { activity } = this.state;
     
     if (activity) {
       return (
@@ -55,16 +55,9 @@ export default class Auth extends React.Component {
     } else {
       return (
         <View style={styles.container}>
-          {user ? (
-            <View>
-              <Text>{user.displayName}</Text>
-              <Image style={{width: 100, height: 100}} source={{uri: user.photoURL}} />
-            </View>
-          ) : (
-            <TouchableHighlight onPress={() => this.handleLogin()}>
-              <Text>Login via Facebook</Text>
-            </TouchableHighlight>
-          )}
+          <TouchableHighlight onPress={() => this.handleLogin()}>
+            <Text>Login via Facebook</Text>
+          </TouchableHighlight>
         </View>
       );
     }

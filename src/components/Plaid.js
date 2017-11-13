@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import PlaidAuthenticator from 'react-native-plaid-link';
 import { View, Text, StyleSheet } from 'react-native';
 
@@ -8,7 +9,19 @@ export default class Plaid extends React.Component {
   }
   
   onMessage = (data) => {
-    this.setState({data})
+    data.metadata && data.metadata.public_token ? this.getAccess(data.metadata.public_token) : this.setState({data});
+  }
+  
+  getAccess(token) {
+    axios({
+      method: 'post',
+      url: 'http://localhost:8000/get_access_token',
+      params: {
+        public_token: token
+      }
+    }).then((res) => {
+      console.log(res);
+    });
   }
   
   render () {
@@ -16,12 +29,7 @@ export default class Plaid extends React.Component {
   }
   
   renderDetails () {
-    return (
-      <View style={styles.container}>
-        <Text>Bank Details</Text>
-        <Text>{this.state.data.metadata.institution.name}</Text>
-      </View>
-    )
+    return null;
   }
   
   renderLogin () {
