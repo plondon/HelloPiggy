@@ -1,47 +1,79 @@
 import React from 'react';
 import axios from 'axios';
 import PlaidAuthenticator from 'react-native-plaid-link';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+
+var authorize = 'http://localhost:8000/auth';
+var getAccessToken = 'http://localhost:8000/get_access_token';
 
 export default class Plaid extends React.Component {
   state = {
-    data: {}
+    data: {},
+    access: false,
+    activity: false
   }
   
   onMessage = (data) => {
     data.metadata && data.metadata.public_token ? this.getAccess(data.metadata.public_token) : this.setState({data});
   }
   
-  getAccess(token) {
-    axios({
-      method: 'post',
-      url: 'http://localhost:8000/get_access_token',
+  getAccess = (token) => {
+    this.setState({ activity: true });
+    axios({ method: 'post', url: getAccessToken,
       params: {
         public_token: token
       }
     }).then((res) => {
-      console.log(res);
+      axios({ method: 'get', url: authorize,
+        params: {
+          access_token: res.data.accessToken
+        }
+      }).then((res) => { this.setState({ activity: false, access: true, data: res.data }); })
     });
   }
   
   render () {
-    return this.state.data.action && this.state.data.action.indexOf('::connected') > -1 ? this.renderDetails() : this.renderLogin();
+    return this.state.access ? this.renderDetails() : this.renderLogin();
   }
   
   renderDetails () {
-    return null;
+    const { accounts } = this.state.data;
+
+    const accountsView = accounts.map((account) => {
+      return (
+        <View key={account.account_id}>
+          <Text>{account.balances.available}</Text>
+        </View>
+      );
+    });
+    
+    console.log(accounts);
+    
+    return (
+      <View>
+        {accountsView}
+      </View>
+    )
   }
   
   renderLogin () {
-    return (
-      <PlaidAuthenticator
+    const { activity } = this.state;
+
+    if (activity) {
+      return (
+        <ActivityIndicator style={styles.centering} size="large"/>
+      )
+    } else {
+      return (
+        <PlaidAuthenticator
         onMessage={this.onMessage}
         publicKey="70899249dbfcd49ba8df6af8b2df65"
         env="sandbox"
         product="auth,transactions"
         clientName="HelloPiggy"
-      />
-    )
+        />
+      )
+    }
   }
 }
 
@@ -50,5 +82,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 24,
     alignItems: 'center'
+  },
+  centering: {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })
