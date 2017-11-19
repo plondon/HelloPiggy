@@ -23,6 +23,7 @@
     "firebase": "^4.6.1",
     "firebase-admin": "^5.4.3",
     "moment": "^2.19.2",
+    "node-env-file": "^0.1.8",
     "plaid": "^2.1.0",
     "react": "16.0.0-beta.5",
     "react-native": "^0.49.5",
