@@ -2,7 +2,9 @@ import React from 'react';
 import Auth from './src/components/Auth';
 import Plaid from './src/components/Plaid';
 import Create from './src/components/Create';
+import Overview from './src/components/Overview';
 import { StyleSheet, Text, View } from 'react-native';
+import * as firebase from 'firebase';
 
 export default class App extends React.Component {
   constructor() {
@@ -12,15 +14,26 @@ export default class App extends React.Component {
   }
   
   onActiveUser(user) {
-    this.setState({ user: user });
+    firebase.database().ref('users/' + user.uid).once('value').then((snapshot) => {
+      if (snapshot.val() !== null) this.setState({ user: snapshot.val(), activity: false });
+      else this.createUser(user);
+    });
+  }
+  
+  createUser(user) {
+    firebase.database().ref('users/' + user.uid).set({
+      username: user.displayName,
+      email: user.email,
+      picture : user.photoURL
+    }).then(() => this.onActiveUser(user));
   }
   
   render() {
     let user = this.state.user;
-    if (true) {
+    if (user) {
       return (
         // <Plaid user={this.state.user}/>
-        <Plaid/>
+        <Overview user={this.state.user}/>
       )
     } else {
       return (
