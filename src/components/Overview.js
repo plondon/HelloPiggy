@@ -9,6 +9,8 @@ export default class Overview extends React.Component {
     return (
       <View style={styles.container}>
         <Text>{ user.username }</Text>
+        <Text>{ user.stats.netIncome }</Text>
+        <Text>{ user.stats.payFrequency }</Text>
       </View>
     );
   }
