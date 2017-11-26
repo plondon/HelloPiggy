@@ -8,39 +8,46 @@ let Form = t.form.Form;
 let Frequencies = t.enums({
   'semiMonthly': 'Semi-Monthly (Twice Each Month)',
   'monthly': 'Monthly',
-  'biWeekly': 'Bi-Weekly (Every Other Week)',
   'weekly': 'Weekly',
   'daily': 'Daily'
 });
 
-let Profile = t.struct({
+let Stats = t.struct({
   netIncome: t.Number,
+  payFrequency: Frequencies,
   savingsGoal: t.Number,
-  payFrequency: Frequencies
+  spending: t.Number,
+  expenses: t.Number
 })
 
 let options = {
   fields: {
     netIncome: {
-      label: 'Net Income Per Paycheck:'
-    },
-    savingsGoal: {
-      label: 'Savings Goal:'
+      label: 'Net Income per Paycheck:'
     },
     payFrequency: {
       label: 'Pay Frequency:'
+    },
+    savingsGoal: {
+      label: 'Monthly Savings Goal:'
+    },
+    spending: {
+      label: 'Spending this Month:'
+    },
+    expenses: {
+      label: 'Monthly Expenses (rent, etc...)'
     }
   }
 }
 
-export default class ProfileSetup extends React.Component {
+export default class UserStats extends React.Component {
   constructor() {
     super()
   }
   
   createUser() {
     let user = firebase.auth().currentUser;
-    let { netIncome, payFrequency } = this.refs.form.getValue();
+    let { netIncome, payFrequency, savingsGoal, spending, expenses } = this.refs.form.getValue();
     
     firebase.database().ref('users/' + user.uid).set({
       username: user.displayName,
@@ -48,7 +55,10 @@ export default class ProfileSetup extends React.Component {
       picture : user.photoURL,
       stats: {
         netIncome: netIncome,
-        payFrequency: payFrequency
+        payFrequency: payFrequency,
+        savingsGoal: savingsGoal,
+        spending: spending,
+        expenses: expenses
       }
     }).then(() => this.props.onComplete(user));
   }
@@ -58,7 +68,7 @@ export default class ProfileSetup extends React.Component {
       <View style={styles.container}>
         <Form
           ref="form"
-          type={Profile}
+          type={Stats}
           options={options}
         />
         <TouchableHighlight style={styles.button} onPress={this.createUser.bind(this)}>

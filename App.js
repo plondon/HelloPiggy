@@ -3,7 +3,7 @@ import Auth from './src/components/Auth';
 import Plaid from './src/components/Plaid';
 import Create from './src/components/Create';
 import Overview from './src/components/Overview';
-import ProfileSetup from './src/components/ProfileSetup';
+import UserStats from './src/components/UserStats';
 import { StyleSheet, Text, View } from 'react-native';
 import * as firebase from 'firebase';
 
@@ -29,7 +29,7 @@ export default class App extends React.Component {
       )
     } else if (user) {
       return (
-        <ProfileSetup user={user} onComplete={this.onActiveUser.bind(this)}/>
+        <UserStats user={user} onComplete={this.onActiveUser.bind(this)}/>
       )
     } else {
       return (
