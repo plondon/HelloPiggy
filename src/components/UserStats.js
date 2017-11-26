@@ -16,7 +16,6 @@ let Stats = t.struct({
   netIncome: t.Number,
   payFrequency: Frequencies,
   savingsGoal: t.Number,
-  spending: t.Number,
   expenses: t.Number
 })
 
@@ -31,9 +30,6 @@ let options = {
     savingsGoal: {
       label: 'Monthly Savings Goal:'
     },
-    spending: {
-      label: 'Spending this Month:'
-    },
     expenses: {
       label: 'Monthly Expenses (rent, etc...)'
     }
@@ -47,9 +43,9 @@ export default class UserStats extends React.Component {
   
   createUser() {
     let user = firebase.auth().currentUser;
-    let { netIncome, payFrequency, savingsGoal, spending, expenses } = this.refs.form.getValue();
+    let { netIncome, payFrequency, savingsGoal, expenses } = this.refs.form.getValue();
     
-    firebase.database().ref('users/' + user.uid).set({
+    firebase.database().ref('users/' + user.uid).update({
       username: user.displayName,
       email: user.email,
       picture : user.photoURL,
@@ -57,7 +53,6 @@ export default class UserStats extends React.Component {
         netIncome: netIncome,
         payFrequency: payFrequency,
         savingsGoal: savingsGoal,
-        spending: spending,
         expenses: expenses
       }
     }).then(() => this.props.onComplete(user));

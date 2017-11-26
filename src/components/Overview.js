@@ -15,7 +15,8 @@ export default class Overview extends React.Component {
   }
   
   componentDidMount() {
-    const { netIncome, payFrequency, spending, savingsGoal, expenses } = this.props.user.stats;
+    const spending = this.props.user.plaid.account.balances.current;
+    const { netIncome, payFrequency, savingsGoal, expenses } = this.props.user.stats;
     
     let lastPaid = new Date().getDate() % 15;
     let conversion = payFrequencyMap[payFrequency].conversion;

@@ -20,16 +20,20 @@ export default class App extends React.Component {
       else this.setState({ user: user });
     });
   }
-  
+
   render() {
     let user = this.state.user;
-    if (user && user.stats) {
+    if (user && !user.plaid || user && user.plaid && !user.plaid.account) {
       return (
-        <Overview user={user}/>
+        <Plaid user={user} onComplete={this.onActiveUser.bind(this)}/>
+      )
+    } else if (user && !user.stats) {
+      return (
+        <UserStats user={user} onComplete={this.onActiveUser.bind(this)}/>
       )
     } else if (user) {
       return (
-        <UserStats user={user} onComplete={this.onActiveUser.bind(this)}/>
+        <Overview user={user}/>
       )
     } else {
       return (

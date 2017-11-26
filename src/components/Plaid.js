@@ -1,71 +1,92 @@
 import React from 'react';
 import axios from 'axios';
+import * as firebase from 'firebase';
 import PlaidAuthenticator from 'react-native-plaid-link';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableHighlight } from 'react-native';
 
 var authorize = 'http://localhost:8000/auth';
-var getTransactions = 'http://localhost:8000/get_txs';
 var getAccessToken = 'http://localhost:8000/get_access_token';
 
 export default class Plaid extends React.Component {
   state = {
     data: {},
-    access: false,
-    activity: false
+    activity: true
   }
   
-  onMessage = (data) => {
-    data.metadata && data.metadata.public_token ? this.getAccess(data.metadata.public_token) : this.setState({data});
+  componentDidMount() {
+    let { user } = this.props;
+
+    if (!user.plaid) this.setState({ activity: false });
+    else this.getAuthorization(user.plaid.token);
+  }
+
+  setPlaidToken = (token) => firebase.database().ref('users/' + firebase.auth().currentUser.uid + '/plaid').update({ token: token });
+
+  setBankAccount = (account) => firebase.database().ref('users/' + firebase.auth().currentUser.uid + '/plaid').update({ account: account }).then(this.props.onComplete())
+
+  onMessage = (data) => data.metadata && data.metadata.public_token ? this.getAccessToken(data.metadata.public_token) : this.setState({data});
+  
+  getAuthorization = (token) => {
+    axios({ method: 'get', url: authorize,
+      params: {
+        access_token: token
+      }
+    }).then((res) => this.setState({ activity: false, data: res.data }));
   }
   
-  getAccess = (token) => {
+  getAccessToken = (token) => {
     this.setState({ activity: true });
     axios({ method: 'post', url: getAccessToken,
       params: {
         public_token: token
       }
     }).then((res) => {
-      axios({ method: 'get', url: authorize,
-        params: {
-          access_token: res.data.accessToken
-        }
-      }).then((res) => { this.setState({ activity: false, access: true, data: res.data }); })
+      let token = res.data.accessToken;
+      this.setPlaidToken(token).then(() => this.getAuthorization(token));
     });
-  }
-  
-  getTransactions = () => {
-    this.setState({ activity: true });
-    axios({ method: 'post', url: getTransactions,
-      params: {
-        access_token: 1
-      }
-    }).then((res) => { debugger; this.setState({ access: true, data: res }) })
   }
 
   render () {
-    return this.state.access ? this.renderDetails() : this.renderLogin();
+    let { user } = this.props;
+    let { data } = this.state;
+
+    if (user.plaid || data.accounts) {
+      return this.renderDetails();
+    } else {
+      return this.renderLogin();
+    }
   }
   
   renderDetails () {
-    // const { accounts } = this.state.data;
+    const { activity, data } = this.state;
 
-    // const accountsView = accounts.map((account) => {
-    //   return (
-    //     <View key={account.account_id}>
-    //       <Text>{account.balances.available}</Text>
-    //     </View>
-    //   );
-    // });
-    
-    console.log(this.state.data);
-    
-    return null;
-    
-    // return (
-    //   <View>
-    //     {accountsView}
-    //   </View>
-    // )
+    if (activity) {
+      return (
+        <ActivityIndicator style={styles.centering} size="large"/>
+      )
+    } else {
+      const accountsView = data.accounts.map((account) => {
+        return (
+          <View key={account.account_id}>
+            <TouchableHighlight onPress={() => this.setBankAccount(account)}>
+              <View>
+                <Text>{ account.name }</Text>
+                <Text>Balance: {account.balances.current}</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+        );
+      });
+      
+      return (
+        <View style={styles.container}>
+          <Text>Select Account:</Text>
+          <View>
+            {accountsView}
+          </View>
+        </View>
+      )
+    }
   }
   
   renderLogin () {
@@ -90,9 +111,8 @@ export default class Plaid extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 24,
+  'container': {
+    marginTop: 40,
     alignItems: 'center'
   },
   centering: {
