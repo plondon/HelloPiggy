@@ -19,10 +19,9 @@ const facebookProvider = new firebase.auth.FacebookAuthProvider();
 export default class Auth extends React.Component {
   constructor() {
     super();
-    this.state = { activity: true }
+    this.state = { activity: false }
     firebase.auth().onAuthStateChanged((user) => {
-      if (user) this.props.onActiveUser(user)
-      else this.state.activity = false
+      if (user) this.props.onActiveUser(user);
     });
   }
   
