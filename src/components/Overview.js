@@ -1,4 +1,6 @@
 import React from 'react';
+import axios from 'axios';
+import R from 'ramda';
 import { Text, View, StyleSheet, ActivityIndicator } from 'react-native';
 
 const payFrequencyMap = {
@@ -8,6 +10,8 @@ const payFrequencyMap = {
   'daily': { human: 'day', conversion: 30 }
 }
 
+const getTxs = 'http://localhost:8000/get_txs'
+
 export default class Overview extends React.Component {
   constructor() {
     super()
@@ -15,19 +19,31 @@ export default class Overview extends React.Component {
   }
   
   componentDidMount() {
-    const spending = this.props.user.plaid.account.balances.current;
     const { netIncome, payFrequency, savingsGoal, expenses } = this.props.user.stats;
-    
-    let lastPaid = new Date().getDate() % 15;
-    let conversion = payFrequencyMap[payFrequency].conversion;
-    let total = netIncome * conversion - savingsGoal - expenses;
-    
-    let daily = total / 30;
-    let target = lastPaid * daily;
-    let actual = spending / lastPaid;
-    let today = daily - (spending - target - daily);
-    
-    this.setState({ daily, target, actual, today });
+
+    let now = new Date();
+    let endDate = new Date();
+    let lastPaid = now.getDate() % 15;
+    let startDate = now.getDate() > 15 ? new Date(now.setDate(15)) : new Date(now.setDate(0));
+
+    axios({ method: 'post', url: getTxs,
+      params: {
+        access_token: this.props.user.plaid.token,
+        start_date: startDate.toISOString().split('T')[0],
+        end_date: endDate.toISOString().split('T')[0]
+      }
+    }).then((res) => {
+      let conversion = payFrequencyMap[payFrequency].conversion;
+      let total = netIncome * conversion - savingsGoal - expenses;
+      let spending = R.sum(res.data.transactions.map((tx) => tx.amount));
+      
+      let daily = total / 30;
+      let target = lastPaid * daily;
+      let actual = spending / lastPaid;
+      let today = daily - (spending - target - daily);
+      
+      this.setState({ daily, target, actual, today });
+    });
   }
   
   render() {
