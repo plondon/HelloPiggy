@@ -30,7 +30,8 @@ export default class Overview extends React.Component {
       params: {
         access_token: this.props.user.plaid.token,
         start_date: startDate.toISOString().split('T')[0],
-        end_date: endDate.toISOString().split('T')[0]
+        end_date: endDate.toISOString().split('T')[0],
+        options: { account_ids: [this.props.user.plaid.account.account_id] }
       }
     }).then((res) => {
       let conversion = payFrequencyMap[payFrequency].conversion;
