@@ -23,7 +23,7 @@ export default class Overview extends React.Component {
 
     let now = new Date();
     let endDate = new Date();
-    let lastPaid = now.getDate() % 15 - 1 || 1;
+    let lastPaid = now.getDate() % 15 || 1;
     let startDate = now.getDate() > 15 ? new Date(now.setDate(15)) : new Date(now.setDate(0));
 
     axios({ method: 'post', url: getTxs,
@@ -42,7 +42,6 @@ export default class Overview extends React.Component {
       let target = lastPaid * daily;
       let actual = spending / lastPaid;
       let today = daily - (spending - target - daily);
-      debugger;
       
       this.setState({ daily, target, actual, today });
     });
