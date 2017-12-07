@@ -1,5 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import * as firebase from 'firebase';
+import { fetchData, authFailure } from '../actions';
 import { Image, View, Text, StyleSheet, TouchableHighlight, ActivityIndicator } from 'react-native';
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -16,12 +19,12 @@ const app = firebase.initializeApp({
 
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
 
-export default class Auth extends React.Component {
-  constructor() {
-    super();
-    this.state = { activity: false }
+class Auth extends React.Component {
+  componentDidMount() {
+    this.props.dispatch(fetchData())
     firebase.auth().onAuthStateChanged((user) => {
-      if (user) this.props.onActiveUser(user);
+      if (user) this.props.onActiveUser();
+      else this.props.dispatch(authFailure());
     });
   }
   
@@ -48,9 +51,9 @@ export default class Auth extends React.Component {
   }
 
   render() {
-    const { activity } = this.state;
+    const { isFetching } = this.props;
     
-    if (activity) {
+    if (isFetching) {
       return (
         <ActivityIndicator style={styles.centering} size="large"/>
       )
@@ -65,6 +68,14 @@ export default class Auth extends React.Component {
     }
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    isFetching: state.dataReducer.isFetching
+  }
+}
+
+export default connect(mapStateToProps)(Auth)
 
 const styles = StyleSheet.create({
   'container': {
