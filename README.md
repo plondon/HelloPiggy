@@ -11,7 +11,7 @@ Todo
 Round 2 Features
 - [x] Save access token to user in database
 - [x] Sync signup/signin -> plaid requests -> display name, balance
-- [ ] Redux and Router?
+- [x] Redux and redux-saga
 
 Round 3 Features
 - [ ] Loading states
