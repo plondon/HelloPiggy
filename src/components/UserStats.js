@@ -1,16 +1,16 @@
-import React from 'react';
-import t from 'tcomb-form-native';
-import * as firebase from 'firebase';
-import { Text, View, StyleSheet, TouchableHighlight } from 'react-native';
+import React from 'react'
+import t from 'tcomb-form-native'
+import * as firebase from 'firebase'
+import { Text, View, StyleSheet, TouchableHighlight } from 'react-native'
 
-let Form = t.form.Form;
+let Form = t.form.Form
 
 let Frequencies = t.enums({
   'semiMonthly': 'Semi-Monthly (Twice Each Month)',
   'monthly': 'Monthly',
   'weekly': 'Weekly',
   'daily': 'Daily'
-});
+})
 
 let Stats = t.struct({
   netIncome: t.Number,
@@ -37,32 +37,28 @@ let options = {
 }
 
 export default class UserStats extends React.Component {
-  constructor() {
-    super()
-  }
-  
-  createUser() {
-    let user = firebase.auth().currentUser;
-    let { netIncome, payFrequency, savingsGoal, expenses } = this.refs.form.getValue();
-    
+  createUser () {
+    let user = firebase.auth().currentUser
+    let { netIncome, payFrequency, savingsGoal, expenses } = this.refs.form.getValue()
+
     firebase.database().ref('users/' + user.uid).update({
       username: user.displayName,
       email: user.email,
-      picture : user.photoURL,
+      picture: user.photoURL,
       stats: {
         netIncome: netIncome,
         payFrequency: payFrequency,
         savingsGoal: savingsGoal,
         expenses: expenses
       }
-    }).then(() => this.props.onComplete(user));
+    }).then(() => this.props.onComplete(user))
   }
-  
-  render() {
+
+  render () {
     return (
       <View style={styles.container}>
         <Form
-          ref="form"
+          ref='form'
           type={Stats}
           options={options}
         />
@@ -70,7 +66,7 @@ export default class UserStats extends React.Component {
           <Text>Save</Text>
         </TouchableHighlight>
       </View>
-    );
+    )
   }
 }
 
@@ -87,4 +83,4 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     justifyContent: 'center'
   }
-});
+})

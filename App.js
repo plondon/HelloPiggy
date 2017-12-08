@@ -10,14 +10,13 @@ import Plaid from './src/components/Plaid'
 import Create from './src/components/Create'
 import Overview from './src/components/Overview'
 import UserStats from './src/components/UserStats'
-import { StyleSheet, Text, View } from 'react-native'
 import * as firebase from 'firebase'
 
-const app = firebase.initializeApp({
-  apiKey: "AIzaSyDmn2WLeDxznRUlkIIOOpYBfTFvSn0g8QQ",
-  authDomain: "hello-piggy.firebaseapp.com",
-  databaseURL: "https://hello-piggy.firebaseio.com/",
-  storageBucket: "gs://hello-piggy.appspot.com"
+firebase.initializeApp({
+  apiKey: 'AIzaSyDmn2WLeDxznRUlkIIOOpYBfTFvSn0g8QQ',
+  authDomain: 'hello-piggy.firebaseapp.com',
+  databaseURL: 'https://hello-piggy.firebaseio.com/',
+  storageBucket: 'gs://hello-piggy.appspot.com'
 })
 
 const sagaMiddleware = createSagaMiddleware()
@@ -25,13 +24,13 @@ let store = createStore(rootReducer, composeWithDevTools(applyMiddleware(sagaMid
 sagaMiddleware.run(rootSaga)
 
 export default class App extends React.Component {
-  constructor() {
+  constructor () {
     super()
     this.state = { user: null }
     this.onActiveUser = this.onActiveUser.bind(this)
   }
-  
-  onActiveUser(user) {
+
+  onActiveUser (user) {
     firebase.database().ref('users/' + user.uid).once('value').then((snapshot) => {
       if (snapshot.val() !== null) this.setState({ user: snapshot.val(), activity: false })
       else this.setState({ user: user })

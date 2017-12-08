@@ -1,59 +1,32 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import * as firebase from 'firebase';
-import { checkActiveUser } from '../actions';
-import { Image, View, Text, StyleSheet, TouchableHighlight, ActivityIndicator } from 'react-native';
-const FBSDK = require('react-native-fbsdk');
-const {
-  LoginManager,
-  AccessToken
-} = FBSDK;
-
-const facebookProvider = new firebase.auth.FacebookAuthProvider();
+import React from 'react'
+import { connect } from 'react-redux'
+import { checkActiveUser, handleFacebookLogin } from '../actions'
+import { View, Text, StyleSheet, TouchableHighlight, ActivityIndicator } from 'react-native'
 
 class Auth extends React.Component {
-  componentDidMount() {
+  componentDidMount () {
     this.props.dispatch(checkActiveUser())
   }
-  
-  handleLogin() {
-    this.setState({ activity: true });
-    LoginManager
-      .logInWithReadPermissions(['email'])
-      .then((result) => {
-        if (result.isCancelled) {
-          return Promise.reject(new Error('The user cancelled the request'));
-        }
-        return AccessToken.getCurrentAccessToken();
-      })
-      .then(data => {
-        const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
-        return firebase.auth().signInWithCredential(credential);
-      })
-      .then((currentUser) => {
-        this.props.onActiveUser(currentUser)
-      })
-      .catch((error) => {
-        console.log(`Login fail with error: ${error}`);
-      });
+
+  handleFacebookLogin () {
+    this.props.dispatch(handleFacebookLogin())
   }
 
-  render() {
-    const { isFetching } = this.props;
-    
+  render () {
+    const { isFetching } = this.props
+
     if (isFetching) {
       return (
-        <ActivityIndicator style={styles.centering} size="large"/>
+        <ActivityIndicator style={styles.centering} size='large' />
       )
     } else {
       return (
         <View style={styles.container}>
-          <TouchableHighlight onPress={() => this.handleLogin()}>
+          <TouchableHighlight onPress={() => this.handleFacebookLogin()}>
             <Text>Login via Facebook</Text>
           </TouchableHighlight>
         </View>
-      );
+      )
     }
   }
 }
@@ -80,4 +53,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   }
-});
+})

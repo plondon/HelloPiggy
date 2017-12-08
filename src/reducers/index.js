@@ -13,7 +13,7 @@ const dataReducer = (state = {}, action) => {
         isFetching: false,
         user: action.data
       }
-    case 'FETCH_USER_FAILURE':
+    case 'FETCH_FAILURE':
       return {
         ...state,
         isFetching: false

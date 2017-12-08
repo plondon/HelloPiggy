@@ -6,7 +6,8 @@
     "babel-preset-react-native-stage-0": "^1.0.1",
     "jest-expo": "^22.0.0",
     "react-test-renderer": "16.0.0-beta.5",
-    "remote-redux-devtools": "^0.5.12"
+    "remote-redux-devtools": "^0.5.12",
+    "standard": "^10.0.3"
   },
   "scripts": {
     "start": "react-native start",

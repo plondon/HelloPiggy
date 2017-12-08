@@ -1,24 +1,45 @@
 import { call, put, takeEvery, all } from 'redux-saga/effects'
-import { onAuthStateChanged } from '../services/firebase'
-import { fetchUserSuccess } from '../actions';
+import { onLogin, getCurrentAccessToken } from '../services/facebook'
+import { onAuthStateChanged, onFacebookLogin } from '../services/firebase'
+import { fetchData, fetchUserSuccess, fetchFailure } from '../actions'
 
-export function* checkActiveUser() {
-  yield put({ type: 'FETCH_DATA' })
+export function * checkActiveUser () {
+  yield put(fetchData())
   try {
     const user = yield call(onAuthStateChanged)
     yield put(fetchUserSuccess(user))
   } catch (e) {
-    console.log(e);
-    yield put({ type: 'FETCH_USER_FAILURE' })
+    yield put(fetchFailure(e))
   }
 }
 
-export function* watchCheckActiveUser() {
+export function * watchCheckActiveUser () {
   yield takeEvery('CHECK_ACTIVE_USER', checkActiveUser)
 }
 
-export default function* rootSaga() {
+export function * handleFacebookLogin () {
+  yield put(fetchData())
+  const login = yield call(onLogin)
+  if (login.isCancelled) {
+    yield put(fetchFailure())
+  } else {
+    try {
+      const token = yield call(getCurrentAccessToken)
+      const user = yield call(onFacebookLogin, token)
+      yield put(fetchUserSuccess(user))
+    } catch (e) {
+      yield put(fetchFailure(e))
+    }
+  }
+}
+
+export function * watchHandleFacebookLogin () {
+  yield takeEvery('HANDLE_FACEBOOK_LOGIN', handleFacebookLogin)
+}
+
+export default function * rootSaga () {
   yield all([
-    watchCheckActiveUser()
+    watchCheckActiveUser(),
+    watchHandleFacebookLogin()
   ])
 }
