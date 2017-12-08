@@ -1,15 +1,19 @@
 import { combineReducers } from 'redux'
 
-const initialState = { isFetching: true }
-
-const dataReducer = (state = initialState, action) => {
+const dataReducer = (state = {}, action) => {
   switch (action.type) {
     case 'FETCH_DATA':
       return {
         ...state,
         isFetching: true
       }
-    case 'AUTH_FAILURE':
+    case 'FETCH_USER_SUCCESS':
+      return {
+        ...state,
+        isFetching: false,
+        user: action.data
+      }
+    case 'FETCH_USER_FAILURE':
       return {
         ...state,
         isFetching: false
@@ -19,6 +23,6 @@ const dataReducer = (state = initialState, action) => {
   }
 }
 
-const app = combineReducers({ dataReducer })
+const rootReducer = combineReducers({ dataReducer })
 
-export default app
+export default rootReducer

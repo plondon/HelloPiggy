@@ -1,17 +1,28 @@
-import React from 'react';
-import { createStore } from 'redux'
+import React from 'react'
+import { createStore, applyMiddleware } from 'redux'
+import createSagaMiddleware from 'redux-saga'
 import { Provider } from 'react-redux'
-import devToolsEnhancer from 'remote-redux-devtools';
-import app from './src/reducers'
-import Auth from './src/components/Auth';
-import Plaid from './src/components/Plaid';
-import Create from './src/components/Create';
-import Overview from './src/components/Overview';
-import UserStats from './src/components/UserStats';
-import { StyleSheet, Text, View } from 'react-native';
-import * as firebase from 'firebase';
+import { composeWithDevTools } from 'remote-redux-devtools'
+import rootReducer from './src/reducers'
+import rootSaga from './src/sagas'
+import Auth from './src/components/Auth'
+import Plaid from './src/components/Plaid'
+import Create from './src/components/Create'
+import Overview from './src/components/Overview'
+import UserStats from './src/components/UserStats'
+import { StyleSheet, Text, View } from 'react-native'
+import * as firebase from 'firebase'
 
-let store = createStore(app, devToolsEnhancer())
+const app = firebase.initializeApp({
+  apiKey: "AIzaSyDmn2WLeDxznRUlkIIOOpYBfTFvSn0g8QQ",
+  authDomain: "hello-piggy.firebaseapp.com",
+  databaseURL: "https://hello-piggy.firebaseio.com/",
+  storageBucket: "gs://hello-piggy.appspot.com"
+})
+
+const sagaMiddleware = createSagaMiddleware()
+let store = createStore(rootReducer, composeWithDevTools(applyMiddleware(sagaMiddleware)))
+sagaMiddleware.run(rootSaga)
 
 export default class App extends React.Component {
   constructor() {
@@ -22,13 +33,13 @@ export default class App extends React.Component {
   
   onActiveUser(user) {
     firebase.database().ref('users/' + user.uid).once('value').then((snapshot) => {
-      if (snapshot.val() !== null) this.setState({ user: snapshot.val(), activity: false });
-      else this.setState({ user: user });
-    });
+      if (snapshot.val() !== null) this.setState({ user: snapshot.val(), activity: false })
+      else this.setState({ user: user })
+    })
   }
 
   render() {
-    let user = this.state.user;
+    let user = this.state.user
     return (
       <Provider store={store}>
         <Auth onActiveUser={this.onActiveUser.bind(this)} />

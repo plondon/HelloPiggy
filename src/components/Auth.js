@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as firebase from 'firebase';
-import { fetchData, authFailure } from '../actions';
+import { checkActiveUser } from '../actions';
 import { Image, View, Text, StyleSheet, TouchableHighlight, ActivityIndicator } from 'react-native';
 const FBSDK = require('react-native-fbsdk');
 const {
@@ -10,22 +10,11 @@ const {
   AccessToken
 } = FBSDK;
 
-const app = firebase.initializeApp({
-  apiKey: "AIzaSyDmn2WLeDxznRUlkIIOOpYBfTFvSn0g8QQ",
-  authDomain: "hello-piggy.firebaseapp.com",
-  databaseURL: "https://hello-piggy.firebaseio.com/",
-  storageBucket: "gs://hello-piggy.appspot.com"
-});
-
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
 
 class Auth extends React.Component {
   componentDidMount() {
-    this.props.dispatch(fetchData())
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) this.props.onActiveUser();
-      else this.props.dispatch(authFailure());
-    });
+    this.props.dispatch(checkActiveUser())
   }
   
   handleLogin() {
