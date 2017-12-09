@@ -1,15 +1,16 @@
 import { call, put, takeEvery, all } from 'redux-saga/effects'
 import { onLogin, getCurrentAccessToken } from '../services/facebook'
-import { onAuthStateChanged, onFacebookLogin } from '../services/firebase'
+import { onAuthStateChanged, onFacebookLogin, getSnapshot } from '../services/firebase'
 import { fetchData, fetchUserSuccess, fetchFailure } from '../actions'
 
 export function * checkActiveUser () {
   yield put(fetchData())
-  try {
-    const user = yield call(onAuthStateChanged)
-    yield put(fetchUserSuccess(user))
-  } catch (e) {
-    yield put(fetchFailure(e))
+  const user = yield call(onAuthStateChanged)
+  if (user) {
+    const snapshot = yield call(getSnapshot, user)
+    yield put(fetchUserSuccess(snapshot))
+  } else {
+    yield put(fetchFailure())
   }
 }
 
@@ -26,7 +27,8 @@ export function * handleFacebookLogin () {
     try {
       const token = yield call(getCurrentAccessToken)
       const user = yield call(onFacebookLogin, token)
-      yield put(fetchUserSuccess(user))
+      const snapshot = yield call(getSnapshot, user)
+      yield put(fetchUserSuccess(snapshot))
     } catch (e) {
       yield put(fetchFailure(e))
     }

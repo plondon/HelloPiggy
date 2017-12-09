@@ -3,13 +3,9 @@ import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { Provider } from 'react-redux'
 import { composeWithDevTools } from 'remote-redux-devtools'
+import MainContainer from './src/containers/MainContainer'
 import rootReducer from './src/reducers'
 import rootSaga from './src/sagas'
-import Auth from './src/components/Auth'
-import Plaid from './src/components/Plaid'
-import Create from './src/components/Create'
-import Overview from './src/components/Overview'
-import UserStats from './src/components/UserStats'
 import * as firebase from 'firebase'
 
 firebase.initializeApp({
@@ -24,42 +20,11 @@ let store = createStore(rootReducer, composeWithDevTools(applyMiddleware(sagaMid
 sagaMiddleware.run(rootSaga)
 
 export default class App extends React.Component {
-  constructor () {
-    super()
-    this.state = { user: null }
-    this.onActiveUser = this.onActiveUser.bind(this)
-  }
-
-  onActiveUser (user) {
-    firebase.database().ref('users/' + user.uid).once('value').then((snapshot) => {
-      if (snapshot.val() !== null) this.setState({ user: snapshot.val(), activity: false })
-      else this.setState({ user: user })
-    })
-  }
-
-  render() {
-    let user = this.state.user
+  render () {
     return (
       <Provider store={store}>
-        <Auth onActiveUser={this.onActiveUser.bind(this)} />
+        <MainContainer />
       </Provider>
     )
-    // if (user && !user.plaid || user && user.plaid && !user.plaid.account) {
-    //   return (
-    //     <Plaid user={user} onComplete={this.onActiveUser.bind(this)}/>
-    //   )
-    // } else if (user && !user.stats) {
-    //   return (
-    //     <UserStats user={user} onComplete={this.onActiveUser.bind(this)}/>
-    //   )
-    // } else if (user) {
-    //   return (
-    //     <Overview user={user}/>
-    //   )
-    // } else {
-    //   return (
-    //     <Auth onActiveUser={this.onActiveUser.bind(this)}/>
-    //   )
-    // }
   }
 }

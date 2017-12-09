@@ -10,3 +10,7 @@ export function onFacebookLogin (data) {
   const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
   return firebase.auth().signInWithCredential(credential)
 }
+
+export function getSnapshot (user) {
+  return firebase.database().ref('users/' + user.uid).once('value')
+}
