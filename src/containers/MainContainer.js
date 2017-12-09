@@ -7,7 +7,6 @@ import UserStats from '../components/UserStats'
 
 class MainContainer extends React.Component {
   render () {
-    console.log(this.props);
     let user = this.props.user
     if (user && !user.plaid) {
       return (

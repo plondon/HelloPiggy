@@ -1,7 +1,9 @@
-import React from 'react';
-import axios from 'axios';
-import R from 'ramda';
-import { Text, View, StyleSheet, ActivityIndicator } from 'react-native';
+import React from 'react'
+import axios from 'axios'
+import R from 'ramda'
+import moment from 'moment'
+import { VictoryPie } from 'victory-native'
+import { Text, View, StyleSheet } from 'react-native'
 
 const payFrequencyMap = {
   'semiMonthly': { human: 'two weeks', conversion: 2 },
@@ -13,68 +15,79 @@ const payFrequencyMap = {
 const getTxs = 'http://localhost:8000/get_txs'
 
 export default class Overview extends React.Component {
-  constructor() {
+  constructor () {
     super()
     this.state = {}
   }
-  
-  componentDidMount() {
-    const { netIncome, payFrequency, savingsGoal, expenses } = this.props.user.stats;
 
-    let now = new Date();
-    let endDate = new Date();
-    let lastPaid = now.getDate() % 15 || 1;
-    let startDate = now.getDate() > 15 ? new Date(now.setDate(15)) : new Date(now.setDate(0));
+  componentDidMount () {
+    const { netIncome, payFrequency, savingsGoal, expenses } = this.props.user.stats
 
-    axios({ method: 'post', url: getTxs,
+    let today = moment()
+    let endDate = moment()
+    let lastPaid = today.date() % 15 || 1
+    let startDate = today.date() > 15 ? today.date(15) : today.date(0)
+
+    axios({
+      method: 'post',
+      url: getTxs,
       params: {
         access_token: this.props.user.plaid.token,
-        start_date: startDate.toISOString().split('T')[0],
-        end_date: endDate.toISOString().split('T')[0],
+        start_date: startDate.format('YYYY-MM-DD'),
+        end_date: endDate.format('YYYY-MM-DD'),
         options: { account_ids: [this.props.user.plaid.account.account_id] }
       }
     }).then((res) => {
-      let conversion = payFrequencyMap[payFrequency].conversion;
-      let total = netIncome * conversion - savingsGoal - expenses;
-      let spending = R.sum(res.data.transactions.map((tx) => tx.amount));
-      
-      let daily = total / 30;
-      let target = lastPaid * daily;
-      let actual = spending / lastPaid;
-      let today = daily - (spending - target - daily);
-      
-      this.setState({ daily, target, actual, today });
-    });
+      // Per Pay Period
+      let conversion = payFrequencyMap[payFrequency].conversion
+      let payPeriodGoal = savingsGoal / conversion
+      let payPeriodExpenses = expenses / conversion
+
+      let total = netIncome - payPeriodGoal - payPeriodExpenses
+      let spending = R.sum(res.data.transactions.map((tx) => tx.amount))
+
+      let daily = total / 15
+      let target = lastPaid * daily
+      let actual = spending / lastPaid
+      let today = daily - (spending - target - daily)
+
+      this.setState({ spending, total, daily, actual, today })
+    })
   }
-  
-  render() {
-    const { user } = this.props;
-    const { daily, target, actual, today } = this.state;
+
+  render () {
+    const { spending, total, daily, actual, today } = this.state
+    const format = (n, float) => n && (float ? parseFloat(n.toFixed(2)) : n.toFixed(2))
 
     return (
       <View style={styles.container}>
-        <Text>{ user.username }</Text>
-        <Text>You make ${ user.stats.netIncome } every { payFrequencyMap[user.stats.payFrequency].human }.</Text>
-        <Text>You want to save ${ user.stats.savingsGoal } each month.</Text>
-        <Text>You should be spending ${ daily } each day.</Text>
-        <Text>You are spending ${ actual } on average.</Text>
-        <Text>Today you can spend ${ today }.</Text>
+        <Text>{ format(spending) } / { format(total) }</Text>
+        <VictoryPie
+          style={{ labels: { display: 'none' } }}
+          width={225} height={225}
+          innerRadius={40}
+          data={
+          [
+            { x: 'Spent', y: format(spending, true) },
+            { x: 'Remaining', y: format(total - spending, true) }
+          ]} />
+        <Text>You should be spending ${ format(daily) } each day.</Text>
+        <Text>You are spending ${ format(actual) } on average.</Text>
+        <Text>Today you can spend ${ format(today) }.</Text>
+        <Text style={styles.subtext}>*All calculations per pay period.</Text>
       </View>
-    );
+    )
   }
 }
 
 const styles = StyleSheet.create({
   'container': {
-    marginTop: 40,
-    alignItems: 'center'
+    height: '100%',
+    paddingTop: 20,
+    alignItems: 'center',
+    backgroundColor: '#FEDCD3'
   },
-  'button': {
-    height: 36,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 4,
-    alignSelf: 'stretch',
-    justifyContent: 'center'
+  'subtext': {
+    fontSize: 10
   }
-});
+})

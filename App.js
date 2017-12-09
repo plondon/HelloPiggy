@@ -2,6 +2,7 @@ import React from 'react'
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { Provider } from 'react-redux'
+import { StyleSheet } from 'react-native'
 import { composeWithDevTools } from 'remote-redux-devtools'
 import MainContainer from './src/containers/MainContainer'
 import rootReducer from './src/reducers'
@@ -23,8 +24,17 @@ export default class App extends React.Component {
   render () {
     return (
       <Provider store={store}>
-        <MainContainer />
+        <MainContainer style={styles.container} />
       </Provider>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  'container': {
+    marginTop: 40,
+    color: '#6E6E69',
+    alignItems: 'center',
+    backgroundColor: '#FFAEBD'
+  }
+})
