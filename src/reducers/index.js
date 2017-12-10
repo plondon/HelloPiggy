@@ -18,6 +18,12 @@ const dataReducer = (state = {}, action) => {
         ...state,
         isFetching: false
       }
+    case 'FETCH_TX_SUCCESS':
+      return {
+        ...state,
+        isFetching: false,
+        transactions: action.data.transactions
+      }
     default:
       return state
   }

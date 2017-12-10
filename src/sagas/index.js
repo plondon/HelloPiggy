@@ -1,7 +1,8 @@
-import { call, put, takeEvery, all } from 'redux-saga/effects'
+import { getTransactions } from '../services/plaid'
 import { onLogin, getCurrentAccessToken } from '../services/facebook'
 import { onAuthStateChanged, onFacebookLogin, getSnapshot } from '../services/firebase'
-import { fetchData, fetchUserSuccess, fetchFailure } from '../actions'
+import { call, put, takeEvery, all } from 'redux-saga/effects'
+import { fetchData, fetchUserSuccess, fetchFailure, fetchTxSuccess } from '../actions'
 
 export function * checkActiveUser () {
   yield put(fetchData())
@@ -39,9 +40,24 @@ export function * watchHandleFacebookLogin () {
   yield takeEvery('HANDLE_FACEBOOK_LOGIN', handleFacebookLogin)
 }
 
+export function * handleTransactions (opts) {
+  yield put(fetchData())
+  const txs = yield call(getTransactions, opts)
+  try {
+    yield put(fetchTxSuccess(txs))
+  } catch (e) {
+    yield put(fetchFailure(e))
+  }
+}
+
+export function * watchHandleTransactions () {
+  yield takeEvery('HANDLE_TRANSACTIONS', handleTransactions)
+}
+
 export default function * rootSaga () {
   yield all([
     watchCheckActiveUser(),
-    watchHandleFacebookLogin()
+    watchHandleFacebookLogin(),
+    watchHandleTransactions()
   ])
 }

@@ -2,6 +2,8 @@ const FETCH_DATA = 'FETCH_DATA'
 const FETCH_FAILURE = 'FETCH_FAILURE'
 const FETCH_USER_SUCCESS = 'FETCH_USER_SUCCESS'
 const CHECK_ACTIVE_USER = 'CHECK_ACTIVE_USER'
+const HANDLE_TRANSACTIONS = 'HANDLE_TRANSACTIONS'
+const FETCH_TX_SUCCESS = 'FETCH_TX_SUCCESS'
 
 const HANDLE_FACEBOOK_LOGIN = 'HANDLE_FACEBOOK_LOGIN'
 
@@ -24,4 +26,14 @@ export const checkActiveUser = () => ({
 
 export const handleFacebookLogin = () => ({
   type: HANDLE_FACEBOOK_LOGIN
+})
+
+export const handleTransactions = (opts) => ({
+  type: HANDLE_TRANSACTIONS,
+  data: opts
+})
+
+export const fetchTxSuccess = (opts) => ({
+  type: FETCH_TX_SUCCESS,
+  data: opts.data
 })
