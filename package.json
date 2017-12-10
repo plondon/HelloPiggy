@@ -18,6 +18,11 @@
   "jest": {
     "preset": "jest-expo"
   },
+  "rnpm": {
+    "assets": [
+  	   "./assets/fonts/"
+    ]
+  },
   "dependencies": {
     "axios": "^0.17.1",
     "envvar": "^2.0.0",

@@ -61,19 +61,21 @@ export default class Overview extends React.Component {
 
     return (
       <View style={styles.container}>
-        <Text>{ format(spending) } / { format(total) }</Text>
+        <Text style={styles.text}>{ format(spending) } / { format(total) }</Text>
         <VictoryPie
-          style={{ labels: { display: 'none' } }}
-          width={225} height={225}
-          innerRadius={40}
           data={
           [
             { x: 'Spent', y: format(spending, true) },
             { x: 'Remaining', y: format(total - spending, true) }
-          ]} />
-        <Text>You should be spending ${ format(daily) } each day.</Text>
-        <Text>You are spending ${ format(actual) } on average.</Text>
-        <Text>Today you can spend ${ format(today) }.</Text>
+          ]}
+          innerRadius={40}
+          labels={() => ''}
+          width={175} height={175}
+          padding={{ top: 10, bottom: 20 }}
+          colorScale={['#BB2273', '#FFAEBD']} />
+        <Text style={styles.text}>You should be spending ${ format(daily) } each day.</Text>
+        <Text style={styles.text}>You are spending ${ format(actual) } on average.</Text>
+        <Text style={styles.text}>Today you can spend ${ format(today) }.</Text>
         <Text style={styles.subtext}>*All calculations per pay period.</Text>
       </View>
     )
@@ -86,6 +88,10 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     alignItems: 'center',
     backgroundColor: '#FEDCD3'
+  },
+  'text': {
+    fontSize: 16,
+    fontFamily: 'ProximaNovaA-Regular'
   },
   'subtext': {
     fontSize: 10
