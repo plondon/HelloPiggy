@@ -1,6 +1,7 @@
 import React from 'react'
 import R from 'ramda'
 import moment from 'moment'
+import Quotient from './Quotient'
 import { connect } from 'react-redux'
 import { VictoryPie } from 'victory-native'
 import { handleTransactions } from '../actions'
@@ -29,7 +30,7 @@ class Overview extends React.Component {
     const format = (n, float) => n && (float ? parseFloat(n.toFixed(2)) : n.toFixed(2))
 
     if (!isFetching && transactions) {
-      let lastPaid = moment().date() % 15 || 1
+      let lastPaid = moment().date() % 15 + 1 || 1
       let conversion = payFrequencyMap[payFrequency].conversion
 
       let payPeriodGoal = savingsGoal / conversion
@@ -45,7 +46,7 @@ class Overview extends React.Component {
 
       return (
         <View style={styles.container}>
-          <Text style={styles.text}>{ format(spending) } / { format(total) }</Text>
+          <Quotient dividend={format(spending)} divisor={format(total)} />
           <VictoryPie
             data={
             [
@@ -55,7 +56,7 @@ class Overview extends React.Component {
             innerRadius={40}
             labels={() => ''}
             width={175} height={175}
-            padding={{ top: 10, bottom: 20 }}
+            padding={{ top: 20, bottom: 20 }}
             colorScale={['#BB2273', '#FFAEBD']} />
           <Text style={styles.text}>You should be spending ${ format(daily) } each day.</Text>
           <Text style={styles.text}>You are spending ${ format(actual) } on average.</Text>
@@ -84,7 +85,7 @@ export default connect(mapStateToProps)(Overview)
 const styles = StyleSheet.create({
   'container': {
     height: '100%',
-    paddingTop: 20,
+    paddingTop: 30,
     alignItems: 'center',
     backgroundColor: '#FEDCD3'
   },
