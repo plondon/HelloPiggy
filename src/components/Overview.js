@@ -37,7 +37,7 @@ class Overview extends React.Component {
       let payPeriodExpenses = expenses / conversion
 
       let total = netIncome - payPeriodGoal - payPeriodExpenses
-      let spending = R.sum(transactions.map((tx) => tx.amount))
+      let spending = R.sum(transactions.map((tx) => tx.amount > 0 && tx.amount))
 
       let daily = total / 15
       let target = lastPaid * daily
