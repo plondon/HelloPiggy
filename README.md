@@ -14,6 +14,8 @@ Round 2 Features
 - [x] Redux and redux-saga
 
 Round 3 Features
+- [ ] "More Options" (Add Payment)
+- [ ] Better user stats forms (cleaner and amt slider)
 - [ ] Loading states
 - [ ] Make it beautiful (color palette, transitions)
 - [ ] Add chart to measure target - spending
