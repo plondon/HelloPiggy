@@ -30,14 +30,15 @@ class Overview extends React.Component {
     const format = (n, float) => n && (float ? parseFloat(n.toFixed(2)) : n.toFixed(2))
 
     if (!isFetching && transactions) {
-      let lastPaid = moment().date() % 15 + 1 || 1
+      let lastPaid = moment().date() % 15 || 1
       let conversion = payFrequencyMap[payFrequency].conversion
 
       let payPeriodGoal = savingsGoal / conversion
       let payPeriodExpenses = expenses / conversion
 
       let total = netIncome - payPeriodGoal - payPeriodExpenses
-      let spending = R.sum(transactions.map((tx) => tx.amount > 0 && tx.amount))
+      // TODO: Remove this -1000 and replace with "Add Payment" option.
+      let spending = R.sum(transactions.filter((tx) => tx.amount > -1000).map((tx) => tx.amount))
 
       let daily = total / 15
       let target = lastPaid * daily
@@ -56,6 +57,11 @@ class Overview extends React.Component {
             innerRadius={40}
             labels={() => ''}
             width={175} height={175}
+            animate={{
+              onEnter: {
+                duration: 10000
+              }
+            }}
             padding={{ top: 20, bottom: 20 }}
             colorScale={['#BB2273', '#FFAEBD']} />
           <Text style={styles.text}>You should be spending ${ format(daily) } each day.</Text>
