@@ -15,7 +15,8 @@ Round 2 Features
 
 Round 3 Features
 - [ ] "More Options" (Add Payment)
-- [ ] Better user stats forms (cleaner and amt slider)
+- [x] Better user stats forms (cleaner and amt slider)
+- [ ] Consider changing UserStats to 'Settings' and getting rid of payFrequency concept, use month instead
 - [ ] Loading states
 - [ ] Make it beautiful (color palette, transitions)
 - [ ] Add chart to measure target - spending
