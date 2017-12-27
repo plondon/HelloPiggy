@@ -57,11 +57,6 @@ class Overview extends React.Component {
             innerRadius={40}
             labels={() => ''}
             width={175} height={175}
-            animate={{
-              onEnter: {
-                duration: 10000
-              }
-            }}
             padding={{ top: 20, bottom: 20 }}
             colorScale={['#BB2273', '#FFAEBD']} />
           <Text style={styles.text}>You should be spending ${ format(daily) } each day.</Text>

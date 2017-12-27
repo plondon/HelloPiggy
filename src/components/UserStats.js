@@ -3,6 +3,8 @@ import * as firebase from 'firebase'
 import { format } from '../services/helpers'
 import { Picker, StyleSheet, Slider, Text, TouchableHighlight, View } from 'react-native'
 
+const DEFAULT = 2500
+
 let payFrequencies = {
   'semiMonthly': 'Semi-Monthly (Twice Each Month)',
   'monthly': 'Monthly',
@@ -17,14 +19,13 @@ export default class UserStats extends React.Component {
   }
 
   componentDidMount () {
-    let defaultN = 2500
     const { stats } = this.props.user
 
     this.setState({
-      netIncome: stats.netIncome || defaultN,
+      netIncome: stats.netIncome || DEFAULT,
       payFrequency: stats.payFrequency || 'semiMonthly',
-      savingsGoal: stats.savingsGoal || defaultN,
-      expenses: stats.expenses || defaultN
+      savingsGoal: stats.savingsGoal || DEFAULT,
+      expenses: stats.expenses || DEFAULT
     })
   }
 
@@ -42,7 +43,7 @@ export default class UserStats extends React.Component {
         savingsGoal: savingsGoal,
         expenses: expenses
       }
-    }).then(() => this.props.onComplete(user))
+    })
   }
 
   updateStat (stat, n) {
@@ -54,14 +55,15 @@ export default class UserStats extends React.Component {
 
     return (
       <View style={styles.container}>
+        <Text style={styles.header}>Your Settings</Text>
         <Slider style={styles.slider} step={5} minimumValue={0} maximumValue={5000} value={netIncome} onValueChange={this.updateStat.bind(this, 'netIncome')} />
-        <Text style={styles.text}>Your Net Pay per paycheck is: { format(netIncome) }</Text>
+        <Text style={styles.text}>Your take home pay per paycheck is: ${ format(netIncome) }</Text>
         <Slider style={styles.slider} step={5} minimumValue={0} maximumValue={5000} value={savingsGoal} onValueChange={this.updateStat.bind(this, 'savingsGoal')} />
-        <Text style={styles.text}>Your savings goal per paycheck is: { format(savingsGoal) }</Text>
+        <Text style={styles.text}>Your savings goal per paycheck is: ${ format(savingsGoal) }</Text>
         <Slider style={styles.slider} step={5} minimumValue={0} maximumValue={5000} value={expenses} onValueChange={this.updateStat.bind(this, 'expenses')} />
-        <Text style={styles.text}>Your expenses each month are: { format(expenses) }</Text>
+        <Text style={styles.text}>Your expenses each month are: ${ format(expenses) }</Text>
         <View>
-          <Picker style={{width: 100}} selectedValue={payFrequency} onValueChange={this.updateStat.bind(this, 'payFrequency')}>
+          <Picker style={styles.picker} itemStyle={styles.pickerItem} selectedValue={payFrequency} onValueChange={this.updateStat.bind(this, 'payFrequency')}>
             <Picker.Item label='Semi-Monthly (Twice Each Month)' value='semiMonthly' />
             <Picker.Item label='Monthly' value='monthly' />
             <Picker.Item label='Weekly' value='weekly' />
@@ -89,12 +91,26 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontFamily: 'ProximaNovaA-Regular'
   },
+  'header': {
+    fontSize: 18,
+    marginBottom: 20,
+    fontFamily: 'ProximaNovaA-Regular'
+  },
   'label': {
     fontSize: 12,
     fontFamily: 'ProximaNovaA-Regular'
   },
   'slider': {
     width: '100%'
+  },
+  'picker': {
+    width: 250,
+    height: 20,
+    margin: 0,
+    padding: 0
+  },
+  'pickerItem': {
+    fontSize: 12
   },
   'button': {
     height: 36,

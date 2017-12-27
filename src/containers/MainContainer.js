@@ -12,7 +12,7 @@ class MainContainer extends React.Component {
       return (
         <Plaid user={user} />
       )
-    } else if (user) {
+    } else if (user && !user.stats) {
       return (
         <UserStats user={user} />
       )
