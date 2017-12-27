@@ -1,7 +1,7 @@
 import React from 'react'
 import * as firebase from 'firebase'
 import { format } from '../services/helpers'
-import { Picker, StyleSheet, Slider, Text, TouchableHighlight, View } from 'react-native'
+import { Picker, StyleSheet, Slider, Text, View } from 'react-native'
 
 const DEFAULT = 2500
 
@@ -48,6 +48,7 @@ export default class UserStats extends React.Component {
 
   updateStat (stat, n) {
     this.setState({ [stat]: n })
+    this.updateUser()
   }
 
   render () {
@@ -71,9 +72,6 @@ export default class UserStats extends React.Component {
           </Picker>
           <Text style={styles.label}>You're paid: { payFrequencies[payFrequency] }</Text>
         </View>
-        <TouchableHighlight style={styles.button} onPress={this.updateUser.bind(this)}>
-          <Text>Save</Text>
-        </TouchableHighlight>
       </View>
     )
   }
@@ -88,17 +86,14 @@ const styles = StyleSheet.create({
   },
   'text': {
     fontSize: 12,
-    marginBottom: 20,
-    fontFamily: 'ProximaNovaA-Regular'
+    marginBottom: 20
   },
   'header': {
     fontSize: 18,
-    marginBottom: 20,
-    fontFamily: 'ProximaNovaA-Regular'
+    marginBottom: 20
   },
   'label': {
-    fontSize: 12,
-    fontFamily: 'ProximaNovaA-Regular'
+    fontSize: 12
   },
   'slider': {
     width: '100%'

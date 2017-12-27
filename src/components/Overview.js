@@ -91,8 +91,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEDCD3'
   },
   'text': {
-    fontSize: 16,
-    fontFamily: 'ProximaNovaA-Regular'
+    fontSize: 16
   },
   'subtext': {
     fontSize: 10
