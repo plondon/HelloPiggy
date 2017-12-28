@@ -1,16 +1,17 @@
 import React from 'react'
 import * as firebase from 'firebase'
 import { format } from '../services/helpers'
-import { Dimensions, Picker, ScrollView, StyleSheet, Slider, Text, View } from 'react-native'
+import TableView from 'react-native-tableview'
+import { Dimensions, ScrollView, StyleSheet, Slider, Text, View } from 'react-native'
+
+const { Item, Section } = TableView
 
 const DEFAULT = 2500
 const fullHeight = Dimensions.get('window').height
 
 let payFrequencies = {
-  'semiMonthly': 'Semi-Monthly (Twice Each Month)',
-  'monthly': 'Monthly',
-  'weekly': 'Weekly',
-  'daily': 'Daily'
+  'semiMonthly': 'Semi-Monthly (Twice a Month)',
+  'monthly': 'Monthly'
 }
 
 export default class UserStats extends React.Component {
@@ -47,9 +48,8 @@ export default class UserStats extends React.Component {
     })
   }
 
-  updateStat (stat, n) {
-    this.setState({ [stat]: n })
-    this.updateUser()
+  updateStat (stat, val) {
+    this.setState({ [stat]: val }, this.updateUser)
   }
 
   render () {
@@ -100,13 +100,16 @@ export default class UserStats extends React.Component {
             </View>
 
             <View>
-              <Picker style={styles.picker} itemStyle={styles.pickerItem} selectedValue={payFrequency} onValueChange={this.updateStat.bind(this, 'payFrequency')}>
-                <Picker.Item label='Semi-Monthly (Twice Each Month)' value='semiMonthly' />
-                <Picker.Item label='Monthly' value='monthly' />
-                <Picker.Item label='Weekly' value='weekly' />
-                <Picker.Item label='Daily' value='daily' />
-              </Picker>
+              <Text style={styles.tableLabel}>Pay Frequency</Text>
             </View>
+            <TableView style={styles.tableView} fontSize={14} tableViewStyle={TableView.Consts.Style.Plain}>
+              <Section>
+                { Object.keys(payFrequencies).map((pf, i) => {
+                  if (pf === payFrequency) return <Item key={i} onPress={this.updateStat.bind(this, 'payFrequency', pf)} selected>{payFrequencies[pf]}</Item>
+                  else return <Item key={i} onPress={this.updateStat.bind(this, 'payFrequency', pf)}>{payFrequencies[pf]}</Item>
+                }) }
+              </Section>
+            </TableView>
           </View>
         </ScrollView>
       </View>
@@ -154,7 +157,6 @@ const styles = StyleSheet.create({
   'settingContainer': {
     height: '100%',
     paddingTop: 30,
-    alignItems: 'center',
     borderTopWidth: 0.5,
     borderTopColor: '#CECED2',
     backgroundColor: '#EFEFF4'
@@ -197,13 +199,16 @@ const styles = StyleSheet.create({
   'slider': {
     width: '100%'
   },
-  'picker': {
-    width: 250,
-    height: 20,
-    margin: 0,
-    padding: 0
+  'tableLabel': {
+    color: '#8E8E93',
+    paddingLeft: 15,
+    marginBottom: 5,
+    fontSize: 14
   },
-  'pickerItem': {
-    fontSize: 12
+  'tableView': {
+    height: 100
+  },
+  'tableItem': {
+    fontSize: 14
   }
 })

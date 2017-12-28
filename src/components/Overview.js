@@ -4,6 +4,7 @@ import moment from 'moment'
 import Quotient from './Quotient'
 import { connect } from 'react-redux'
 import { VictoryPie } from 'victory-native'
+import { format } from '../services/helpers'
 import { handleTransactions } from '../actions'
 import { Text, View, StyleSheet, ActivityIndicator } from 'react-native'
 
@@ -27,7 +28,6 @@ class Overview extends React.Component {
   render () {
     const { isFetching, transactions } = this.props
     const { netIncome, payFrequency, savingsGoal, expenses } = this.props.user.stats
-    const format = (n, float) => n && (float ? parseFloat(n.toFixed(2)) : n.toFixed(2))
 
     if (!isFetching && transactions) {
       let lastPaid = moment().date() % 15 || 1
