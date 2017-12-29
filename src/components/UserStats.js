@@ -9,9 +9,24 @@ const { Item, Section } = TableView
 const DEFAULT = 2500
 const fullHeight = Dimensions.get('window').height
 
-let payFrequencies = {
+let payFrequencyMap = {
   'semiMonthly': 'Semi-Monthly (Twice a Month)',
   'monthly': 'Monthly'
+}
+
+let settingsMap = {
+  'netIncome': {
+    label: (val) => 'Take Home Pay: $' + format(val),
+    helper: 'Your take home pay is the amount you receive each paycheck after taxes and deductions.'
+  },
+  'savingsGoal': {
+    label: (val) => 'Savings Goal: $' + format(val),
+    helper: 'Your savings goal is simple. How much do you want to save each month?'
+  },
+  'expenses': {
+    label: (val) => 'Monthly Expenses: $' + format(val),
+    helper: 'Your monthly expenses include things like your rent, electricity, or skincare product addiction.'
+  }
 }
 
 export default class UserStats extends React.Component {
@@ -54,7 +69,6 @@ export default class UserStats extends React.Component {
 
   render () {
     let { displayName, email } = firebase.auth().currentUser
-    const { netIncome, payFrequency, savingsGoal, expenses } = this.state
 
     return (
       <View style={{flex: 1}}>
@@ -68,45 +82,30 @@ export default class UserStats extends React.Component {
             <Text style={styles.info}>{email}</Text>
           </View>
           <View style={styles.settingContainer}>
-
-            <View style={styles.settingView}>
-              <View style={styles.setting}>
-                <View style={styles.labelView}>
-                  <Text style={styles.label}>Take Home Pay: ${ format(netIncome) }</Text>
-                </View>
-                <Slider style={styles.slider} step={10} minimumValue={500} maximumValue={4000} value={netIncome} onValueChange={this.updateStat.bind(this, 'netIncome')} />
-                <Text style={styles.helper}>Your take home pay is the amount you receive each paycheck after taxes and deductions.</Text>
-              </View>
-            </View>
-
-            <View style={styles.settingView}>
-              <View style={styles.setting}>
-                <View style={styles.labelView}>
-                  <Text style={styles.label}>Savings Goal: ${ format(savingsGoal) }</Text>
-                </View>
-                <Slider style={styles.slider} step={10} minimumValue={0} maximumValue={3000} value={savingsGoal} onValueChange={this.updateStat.bind(this, 'savingsGoal')} />
-                <Text style={styles.helper}>Your savings goal is simple. How much do you want to save each month?</Text>
-              </View>
-            </View>
-
-            <View style={styles.settingView}>
-              <View style={styles.setting}>
-                <View style={styles.labelView}>
-                  <Text style={styles.label}>Monthly Expenses: ${ format(expenses) }</Text>
-                </View>
-                <Slider style={styles.slider} step={10} minimumValue={500} maximumValue={3000} value={expenses} onValueChange={this.updateStat.bind(this, 'expenses')} />
-                <Text style={styles.helper}>Your monthly expenses include things like your rent, electricity, or skincare product addiction.</Text>
-              </View>
-            </View>
+            {
+              Object.keys(settingsMap).map((setting, i) => {
+                return (
+                  <View key={i} style={styles.settingView}>
+                    <View style={styles.setting}>
+                      <View style={styles.labelView}>
+                        <Text style={styles.label}>{settingsMap[setting].label(this.state[setting])}</Text>
+                      </View>
+                      <Slider style={styles.slider} step={10} minimumValue={500} maximumValue={4500} value={this.state[setting]} onValueChange={this.updateStat.bind(this, setting)} />
+                      <Text style={styles.helper}>{settingsMap[setting].helper}</Text>
+                    </View>
+                  </View>
+                )
+              })
+            }
 
             <View>
               <Text style={styles.tableLabel}>Pay Frequency</Text>
             </View>
             <TableView style={styles.tableView} fontSize={14} tableViewStyle={TableView.Consts.Style.Plain}>
               <Section>
-                { Object.keys(payFrequencies).map((pf, i) => {
-                  if (pf === payFrequency) return <Item key={i} onPress={this.updateStat.bind(this, 'payFrequency', pf)} selected>{payFrequencies[pf]}</Item>
-                  else return <Item key={i} onPress={this.updateStat.bind(this, 'payFrequency', pf)}>{payFrequencies[pf]}</Item>
+                { Object.keys(payFrequencyMap).map((pf, i) => {
+                  if (pf === this.state.payFrequency) return <Item key={i} onPress={this.updateStat.bind(this, 'payFrequency', pf)} selected>{payFrequencyMap[pf]}</Item>
+                  else return <Item key={i} onPress={this.updateStat.bind(this, 'payFrequency', pf)}>{payFrequencyMap[pf]}</Item>
                 }) }
               </Section>
             </TableView>
