@@ -1,7 +1,7 @@
 import axios from 'axios'
 import moment from 'moment'
 
-const getTxs = 'http://localhost:8000/get_txs'
+const getTxs = 'https://hellopiggy.fun/get_txs'
 
 export function getTransactions (opts) {
   let today = moment()

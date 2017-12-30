@@ -10,9 +10,7 @@ import { Text, View, StyleSheet, ActivityIndicator } from 'react-native'
 
 const payFrequencyMap = {
   'semiMonthly': { human: 'two weeks', conversion: 2 },
-  'monthly': { human: 'month', conversion: 1 },
-  'weekly': { human: 'week', conversion: 4 },
-  'daily': { human: 'day', conversion: 30 }
+  'monthly': { human: 'month', conversion: 1 }
 }
 
 class Overview extends React.Component {
@@ -36,31 +34,31 @@ class Overview extends React.Component {
       let payPeriodGoal = savingsGoal / conversion
       let payPeriodExpenses = expenses / conversion
 
-      let total = netIncome - payPeriodGoal - payPeriodExpenses
+      let totalTarget = netIncome - payPeriodGoal - payPeriodExpenses
       // TODO: Remove this -1000 and replace with "Add Payment" option.
-      let spending = R.sum(transactions.filter((tx) => tx.amount > -1000).map((tx) => tx.amount))
+      let totalActual = R.sum(transactions.filter((tx) => tx.amount > -1000).map((tx) => tx.amount))
 
-      let daily = total / 15
-      let target = lastPaid * daily
-      let actual = spending / lastPaid
-      let today = daily - (spending - target - daily)
+      let dailyTarget = totalTarget / 15
+      let dailyActual = totalActual / lastPaid
+      let totalActualToday = lastPaid * dailyTarget
+      let today = dailyTarget - (totalActual - totalActualToday - dailyTarget)
 
       return (
         <View style={styles.container}>
-          <Quotient dividend={format(spending)} divisor={format(total)} />
+          <Quotient dividend={format(totalActual)} divisor={format(totalTarget)} />
           <VictoryPie
             data={
             [
-              { x: 'Spent', y: format(spending, true) },
-              { x: 'Remaining', y: format(total - spending, true) }
+              { x: 'Spent', y: format(totalActual, true) },
+              { x: 'Remaining', y: format(totalTarget - totalActual, true) }
             ]}
             innerRadius={40}
             labels={() => ''}
             width={175} height={175}
             padding={{ top: 20, bottom: 20 }}
             colorScale={['#BB2273', '#FFAEBD']} />
-          <Text style={styles.text}>You should be spending ${ format(daily) } each day.</Text>
-          <Text style={styles.text}>You are spending ${ format(actual) } on average.</Text>
+          <Text style={styles.text}>You should be spending ${ format(dailyTarget) } each day.</Text>
+          <Text style={styles.text}>You are actually spending ${ format(dailyActual) } on average.</Text>
           <Text style={styles.text}>Today you can spend ${ format(today) }.</Text>
           <Text style={styles.subtext}>*All calculations per pay period.</Text>
         </View>
