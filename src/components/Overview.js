@@ -4,8 +4,8 @@ import moment from 'moment'
 import Quotient from './Quotient'
 import { connect } from 'react-redux'
 import { VictoryPie } from 'victory-native'
-import { format } from '../services/helpers'
 import { handleTransactions } from '../actions'
+import { format, getLastPayDay } from '../services/helpers'
 import { Text, View, StyleSheet, ActivityIndicator } from 'react-native'
 
 const payFrequencyMap = {
@@ -28,7 +28,8 @@ class Overview extends React.Component {
     const { netIncome, payFrequency, savingsGoal, expenses } = this.props.user.stats
 
     if (!isFetching && transactions) {
-      let lastPaid = moment().date() % 15 || 1
+      let today = moment()
+      let lastPaid = (today - getLastPayDay()) / 8.64e7
       let conversion = payFrequencyMap[payFrequency].conversion
 
       let payPeriodGoal = savingsGoal / conversion
@@ -40,8 +41,8 @@ class Overview extends React.Component {
 
       let dailyTarget = totalTarget / 15
       let dailyActual = totalActual / lastPaid
-      let totalActualToday = lastPaid * dailyTarget
-      let today = dailyTarget - (totalActual - totalActualToday - dailyTarget)
+      let totalTargetToday = lastPaid * dailyTarget
+      let totalRemainingToday = totalTargetToday - totalActual
 
       return (
         <View style={styles.container}>
@@ -59,7 +60,7 @@ class Overview extends React.Component {
             colorScale={['#BB2273', '#FFAEBD']} />
           <Text style={styles.text}>You should be spending ${ format(dailyTarget) } each day.</Text>
           <Text style={styles.text}>You are actually spending ${ format(dailyActual) } on average.</Text>
-          <Text style={styles.text}>Today you can spend ${ format(today) }.</Text>
+          <Text style={styles.text}>Today you can spend ${ format(totalRemainingToday) }.</Text>
           <Text style={styles.subtext}>*All calculations per pay period.</Text>
         </View>
       )

@@ -1,12 +1,12 @@
 import axios from 'axios'
 import moment from 'moment'
+import { getLastPayDay } from '../services/helpers'
 
 const getTxs = 'https://hellopiggy.fun/get_txs'
 
 export function getTransactions (opts) {
-  let today = moment()
   let endDate = moment()
-  let startDate = today.date() > 15 ? today.date(15) : today.date(0)
+  let startDate = getLastPayDay()
 
   let { token, account } = opts.data
 
