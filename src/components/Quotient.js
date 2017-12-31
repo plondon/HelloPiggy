@@ -4,11 +4,11 @@ import { View, Text, StyleSheet } from 'react-native'
 export default class Quotient extends React.Component {
   render () {
     return (
-      <View>
-        <View style={styles.dividend}>
+      <View style={styles.container}>
+        <View>
           <Text>{this.props.dividend}</Text>
         </View>
-        <View>
+        <View style={styles.divisor}>
           <Text>{this.props.divisor}</Text>
         </View>
       </View>
@@ -17,8 +17,11 @@ export default class Quotient extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  dividend: {
-    borderBottomWidth: 1,
-    borderBottomColor: 'black'
+  container: {
+    alignItems: 'center'
+  },
+  divisor: {
+    borderTopWidth: 1,
+    borderTopColor: 'black'
   }
 })

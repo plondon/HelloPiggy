@@ -46,7 +46,7 @@ class Overview extends React.Component {
 
       return (
         <View style={styles.container}>
-          <Quotient dividend={format(totalActual)} divisor={format(totalTarget)} />
+          <Quotient dividend={'$' + format(totalActual)} divisor={'$' + format(totalTarget)} />
           <VictoryPie
             data={
             [
