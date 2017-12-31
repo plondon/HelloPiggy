@@ -15,7 +15,6 @@ Round 2 Features
 - [x] Redux and redux-saga
 
 Round 3 Features
-- [ ] Clean up overview logic and add better edge case support
 - [ ] Branding / Login page cleanup
 - [ ] "More Options" (Add Payment)
 - [ ] TabBar
@@ -23,6 +22,7 @@ Round 3 Features
 - [x] Color Palette
 - [x] Better user stats forms (cleaner and amt slider)
 - [x] Add chart to measure target - spending
+- [x] Clean up overview logic and add better edge case support
 
 Round 4 Features
 - [ ] Consider changing UserStats to 'Settings'
