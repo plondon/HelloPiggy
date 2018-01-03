@@ -16,7 +16,9 @@ const payFrequencyMap = {
 class Overview extends React.Component {
   constructor () {
     super()
-    this.state = {}
+    this.state = {
+      timeframe: 'today'
+    }
   }
 
   componentWillMount () {
@@ -24,6 +26,7 @@ class Overview extends React.Component {
   }
 
   render () {
+    const { timeframe } = this.state
     const { isFetching, transactions } = this.props
     const { netIncome, payFrequency, savingsGoal, expenses } = this.props.user.stats
 
@@ -37,31 +40,72 @@ class Overview extends React.Component {
 
       let totalTarget = netIncome - payPeriodGoal - payPeriodExpenses
       // TODO: Remove this -1000 and replace with "Add Payment" option.
-      let totalActual = R.sum(transactions.filter((tx) => tx.amount > -1000).map((tx) => tx.amount))
+      let totalTransactions = transactions.filter((tx) => tx.amount > -1000)
+      let totalTransactionsToday = totalTransactions.filter((tx) => tx.date === today.format('YYYY-MM-DD'))
+      let totalTransactionsMinusToday = totalTransactions.filter((tx) => tx.date !== today.format('YYYY-MM-DD'))
+
+      let totalActual = R.sum(totalTransactions.map((tx) => tx.amount))
+      let totalActualToday = R.sum(totalTransactionsToday.map((tx) => tx.amount))
+      let totalActualMinusToday = R.sum(totalTransactionsMinusToday.map((tx) => tx.amount))
 
       let dailyTarget = totalTarget / 15
       let dailyActual = totalActual / lastPaid
       let totalTargetToday = lastPaid * dailyTarget
-      let totalRemainingToday = totalTargetToday - totalActual
+
+      let spent, remaining
+      if (timeframe === 'today') {
+        spent = totalActualToday
+        remaining = totalTargetToday - totalActualMinusToday
+      } else {
+        spent = totalActual
+        remaining = totalTarget
+      }
 
       return (
         <View style={styles.container}>
-          <Quotient dividend={'$' + format(totalActual)} divisor={'$' + format(totalTarget)} />
-          <VictoryPie
-            data={
-            [
-              { x: 'Spent', y: format(totalActual, true) },
-              { x: 'Remaining', y: format(totalTarget - totalActual, true) }
-            ]}
-            innerRadius={40}
-            labels={() => ''}
-            width={175} height={175}
-            padding={{ top: 20, bottom: 20 }}
-            colorScale={['#BB2273', '#FFAEBD']} />
-          <Text style={styles.text}>You should be spending ${ format(dailyTarget) } each day.</Text>
-          <Text style={styles.text}>You are actually spending ${ format(dailyActual) } on average.</Text>
-          <Text style={styles.text}>Today you can spend ${ format(totalRemainingToday) }.</Text>
-          <Text style={styles.subtext}>*All calculations per pay period.</Text>
+          <View style={styles.headerView}>
+            <Text style={styles.headerText}>Totals</Text>
+          </View>
+          <View style={styles.optionSelectView}>
+            <View style={timeframe === 'today' ? styles.optionSelectedView : {}}>
+              <Text onPress={() => this.setState({timeframe: 'today'})}>Today</Text>
+            </View>
+            <View style={timeframe === 'overall' ? styles.optionSelectedView : {}}>
+              <Text onPress={() => this.setState({timeframe: 'overall'})}>Overall</Text>
+            </View>
+          </View>
+          <View style={styles.chartView}>
+            <View style={styles.centerAbsolute}>
+              <Quotient dividend={'$' + format(spent)} divisor={'$' + format(remaining)} />
+            </View>
+            <VictoryPie
+              data={[
+                { x: 'Spent', y: format(spent, true) },
+                { x: 'Remaining', y: format(remaining - spent, true) } ]}
+              innerRadius={60}
+              labels={() => ''}
+              width={160} height={160}
+              padding={{ top: 0, bottom: 0 }}
+              colorScale={['#BB2273', '#FFAEBD']} />
+          </View>
+          <View style={styles.headerView}>
+            <Text style={styles.headerText}>Averages</Text>
+          </View>
+          <View style={styles.optionSelectView}>
+            <View style={styles.optionSelectedView}>
+              <Text>Target</Text>
+            </View>
+            <View style={styles.optionSelectedView}>
+              <Text>Actual</Text>
+            </View>
+          </View>
+          <View style={styles.optionValueView}>
+            <Text style={styles.optionValueText}>${ format(dailyTarget) }</Text>
+            <Text style={styles.optionValueText}>${ format(dailyActual) }</Text>
+          </View>
+          <View style={styles.moreOptionsView}>
+            <Text style={styles.moreOptionsText}>More Options</Text>
+          </View>
         </View>
       )
     } else {
@@ -85,15 +129,60 @@ export default connect(mapStateToProps)(Overview)
 const styles = StyleSheet.create({
   'container': {
     height: '100%',
+    backgroundColor: '#F8F7F5'
+  },
+  'headerView': {
+    width: '100%',
     paddingTop: 30,
+    paddingBottom: 5,
+    borderBottomWidth: 1,
     alignItems: 'center',
-    backgroundColor: '#FEDCD3'
+    borderBottomColor: '#FEDCD3'
   },
-  'text': {
-    fontSize: 16
+  'headerText': {
+    fontSize: 16,
+    fontWeight: 'bold'
   },
-  'subtext': {
-    fontSize: 10
+  'optionSelectView': {
+    paddingTop: 10,
+    paddingLeft: 15,
+    paddingRight: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
+  'optionSelectedView': {
+    borderBottomColor: '#BB2273',
+    borderBottomWidth: 2,
+    paddingBottom: 2,
+    marginBottom: 3
+  },
+  'optionValueView': {
+    paddingLeft: 15,
+    paddingRight: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
+  'optionValueText': {
+    fontSize: 16,
+    fontWeight: 'bold'
+  },
+  'chartView': {
+    position: 'relative',
+    alignItems: 'center',
+    paddingTop: 10
+  },
+  'centerAbsolute': {
+    position: 'absolute',
+    marginTop: -10,
+    top: '50%'
+  },
+  'moreOptionsView': {
+    paddingTop: 50,
+    alignItems: 'center'
+  },
+  'moreOptionsText': {
+    color: '#FFAEBD',
+    fontWeight: 'bold'
   },
   'centering': {
     top: 0,

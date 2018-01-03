@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   'header': {
     fontSize: 16,
     marginBottom: 20,
-    color: '#FFFFFF'
+    color: '#F8F7F5'
   },
   'infoView': {
     paddingBottom: 30,
@@ -143,11 +143,11 @@ const styles = StyleSheet.create({
   'infoLarge': {
     fontSize: 14,
     marginBottom: 5,
-    color: '#FFFFFF'
+    color: '#F8F7F5'
   },
   'info': {
     fontSize: 12,
-    color: '#FFFFFF'
+    color: '#F8F7F5'
   },
   'scrollView': {
     flex: 1,
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     borderTopColor: '#CECED2',
     borderBottomColor: '#CECED2',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8F7F5',
     borderBottomWidth: 0.5,
     borderTopWidth: 0.5
   },
