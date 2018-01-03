@@ -6,7 +6,9 @@ import { connect } from 'react-redux'
 import { VictoryPie } from 'victory-native'
 import { handleTransactions } from '../actions'
 import { format, getLastPayDay } from '../services/helpers'
-import { Text, View, StyleSheet, ActivityIndicator } from 'react-native'
+import { Text, View, StyleSheet, ActivityIndicator, ActionSheetIOS } from 'react-native'
+
+const { showActionSheetWithOptions } = ActionSheetIOS
 
 const payFrequencyMap = {
   'semiMonthly': { human: 'two weeks', conversion: 2 },
@@ -25,6 +27,15 @@ class Overview extends React.Component {
     this.props.dispatch(handleTransactions({ token: this.props.user.plaid.token, account: this.props.user.plaid.account.account_id }))
   }
 
+  showActions () {
+    showActionSheetWithOptions({
+      options: ['See Tomorrow', 'Cancel'],
+      cancelButtonIndex: 1
+    }, (buttonIndex) => {
+      if (buttonIndex === 0) this.setState({ timeframe: 'tomorrow' })
+    })
+  }
+
   render () {
     const { timeframe } = this.state
     const { isFetching, transactions } = this.props
@@ -34,6 +45,8 @@ class Overview extends React.Component {
       let today = moment()
       let lastPaid = (today - getLastPayDay()) / 8.64e7
       let conversion = payFrequencyMap[payFrequency].conversion
+      if (timeframe === 'tomorrow') lastPaid++
+      console.log(timeframe)
 
       let payPeriodGoal = savingsGoal / conversion
       let payPeriodExpenses = expenses / conversion
@@ -55,6 +68,9 @@ class Overview extends React.Component {
       let spent, remaining
       if (timeframe === 'today') {
         spent = totalActualToday
+        remaining = totalTargetToday - totalActualMinusToday
+      } else if (timeframe === 'tomorrow') {
+        spent = 0
         remaining = totalTargetToday - totalActualMinusToday
       } else {
         spent = totalActual
@@ -104,7 +120,7 @@ class Overview extends React.Component {
             <Text style={styles.optionValueText}>${ format(dailyActual) }</Text>
           </View>
           <View style={styles.moreOptionsView}>
-            <Text style={styles.moreOptionsText}>More Options</Text>
+            <Text style={styles.moreOptionsText} onPress={() => this.showActions()}>More Options</Text>
           </View>
         </View>
       )
