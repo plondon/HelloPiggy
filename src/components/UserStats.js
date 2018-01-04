@@ -39,10 +39,10 @@ export default class UserStats extends React.Component {
     const { stats } = this.props.user
 
     this.setState({
-      netIncome: stats.netIncome || DEFAULT,
-      payFrequency: stats.payFrequency || 'semiMonthly',
-      savingsGoal: stats.savingsGoal || DEFAULT,
-      expenses: stats.expenses || DEFAULT
+      netIncome: (stats && stats.netIncome) || DEFAULT,
+      payFrequency: (stats && stats.payFrequency) || 'semiMonthly',
+      savingsGoal: (stats && stats.savingsGoal) || DEFAULT,
+      expenses: (stats && stats.expenses) || DEFAULT
     })
   }
 

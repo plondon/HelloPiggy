@@ -8,7 +8,9 @@ import UserStats from '../components/UserStats'
 class MainContainer extends React.Component {
   render () {
     let user = this.props.user
-    if (user && !user.plaid) {
+    let plaidComplete = user && user.plaid.token && user.plaid.account
+
+    if (user === null || (user && !plaidComplete)) {
       return (
         <Plaid user={user} />
       )

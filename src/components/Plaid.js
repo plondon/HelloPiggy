@@ -8,6 +8,14 @@ var authorize = 'https://hellopiggy.fun/auth'
 var getAccessToken = 'https://hellopiggy.fun/get_access_token'
 
 export default class Plaid extends React.Component {
+  constructor () {
+    super()
+    this.state = {
+      data: {},
+      activity: true
+    }
+  }
+
   componentDidMount () {
     let { user } = this.props
 
