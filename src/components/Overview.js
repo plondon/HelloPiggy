@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import { VictoryPie } from 'victory-native'
 import { handleTransactions } from '../actions'
 import { format, getLastPayDay } from '../services/helpers'
-import { Text, View, StyleSheet, ActivityIndicator, ActionSheetIOS } from 'react-native'
+import { ActivityIndicator, ActionSheetIOS, StyleSheet, ScrollView, Text, View } from 'react-native'
 
 const { showActionSheetWithOptions } = ActionSheetIOS
 
@@ -46,7 +46,6 @@ class Overview extends React.Component {
       let lastPaid = (today - getLastPayDay()) / 8.64e7
       let conversion = payFrequencyMap[payFrequency].conversion
       if (timeframe === 'tomorrow') lastPaid++
-      console.log(timeframe)
 
       let payPeriodGoal = savingsGoal / conversion
       let payPeriodExpenses = expenses / conversion
@@ -78,7 +77,7 @@ class Overview extends React.Component {
       }
 
       return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
           <View style={styles.headerView}>
             <Text style={styles.headerText}>Totals</Text>
           </View>
@@ -119,10 +118,25 @@ class Overview extends React.Component {
             <Text style={styles.optionValueText}>${ format(dailyTarget) }</Text>
             <Text style={styles.optionValueText}>${ format(dailyActual) }</Text>
           </View>
+          <View style={styles.headerView}>
+            <Text style={styles.headerText}>Recent Transactions</Text>
+          </View>
+          <View>
+            {
+              R.take(5)(totalTransactions).map((tx, i) => {
+                return (
+                  <View key={i} style={styles.transactionView}>
+                    <Text style={styles.transactionName}>{tx.name}</Text>
+                    <Text style={styles.transactionAmount}>${tx.amount}</Text>
+                  </View>
+                )
+              })
+            }
+          </View>
           <View style={styles.moreOptionsView}>
             <Text style={styles.moreOptionsText} onPress={() => this.showActions()}>More Options</Text>
           </View>
-        </View>
+        </ScrollView>
       )
     } else {
       return (
@@ -191,6 +205,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginTop: -10,
     top: '50%'
+  },
+  'transactionView': {
+    marginTop: 10,
+    paddingLeft: 15,
+    paddingRight: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  'transactionName': {
+    fontSize: 12,
+    fontWeight: 'bold'
+  },
+  'transactionAmount': {
+    fontSize: 12
   },
   'moreOptionsView': {
     paddingTop: 50,
