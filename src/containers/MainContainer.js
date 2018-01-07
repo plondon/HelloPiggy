@@ -7,18 +7,22 @@ import UserStats from '../components/UserStats'
 
 class MainContainer extends React.Component {
   render () {
-    let user = this.props.user
-    // let plaidComplete = user && user.plaid.token && user.plaid.accounts
+    let { user, route } = this.props
+    let plaidComplete = user && user.plaid && user.plaid.token && user.plaid.accounts
+
+    if (user && !plaidComplete) {
+      route = 'Plaid'
+    }
 
     if (user) {
       return (
         <Plaid user={user} />
       )
-    } else if (user && !user.stats) {
+    } else if (route === 'Settings') {
       return (
         <UserStats user={user} />
       )
-    } else if (user) {
+    } else if (route === 'Home') {
       return (
         <Overview user={user} />
       )
@@ -32,7 +36,8 @@ class MainContainer extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    user: state.dataReducer.user
+    user: state.dataReducer.user,
+    route: state.routeReducer.route
   }
 }
 

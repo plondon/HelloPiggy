@@ -29,6 +29,19 @@ const dataReducer = (state = {}, action) => {
   }
 }
 
-const rootReducer = combineReducers({ dataReducer })
+const routeReducer = (state = {}, action) => {
+  console.log(action)
+  switch (action.type) {
+    case 'ROUTE_TO':
+      return {
+        ...state,
+        route: action.data
+      }
+    default:
+      return state
+  }
+}
+
+const rootReducer = combineReducers({ dataReducer, routeReducer })
 
 export default rootReducer

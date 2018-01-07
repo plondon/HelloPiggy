@@ -7,6 +7,8 @@ const FETCH_TX_SUCCESS = 'FETCH_TX_SUCCESS'
 
 const HANDLE_FACEBOOK_LOGIN = 'HANDLE_FACEBOOK_LOGIN'
 
+const ROUTE_TO = 'ROUTE_TO'
+
 export const fetchData = () => ({
   type: FETCH_DATA
 })
@@ -36,4 +38,9 @@ export const handleTransactions = (opts) => ({
 export const fetchTxSuccess = (opts) => ({
   type: FETCH_TX_SUCCESS,
   data: opts.data
+})
+
+export const routeTo = (opts) => ({
+  type: ROUTE_TO,
+  data: opts.route
 })
