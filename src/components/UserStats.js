@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   'tableView': {
-    height: 100
+    flex: 1
   },
   'tableItem': {
     fontSize: 14

@@ -24,7 +24,7 @@ class Overview extends React.Component {
   }
 
   componentWillMount () {
-    this.props.dispatch(handleTransactions({ token: this.props.user.plaid.token, account: this.props.user.plaid.account.account_id }))
+    this.props.dispatch(handleTransactions({ token: this.props.user.plaid.token, accountIds: this.props.user.plaid.accounts }))
   }
 
   showActions () {

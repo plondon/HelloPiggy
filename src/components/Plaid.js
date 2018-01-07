@@ -1,8 +1,12 @@
 import React from 'react'
 import axios from 'axios'
+import R from 'ramda'
 import * as firebase from 'firebase'
+import TableView from 'react-native-tableview'
 import PlaidAuthenticator from 'react-native-plaid-link'
-import { View, Text, StyleSheet, ActivityIndicator, TouchableHighlight } from 'react-native'
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
+
+const { Item, Section } = TableView
 
 var authorize = 'https://hellopiggy.fun/auth'
 var getAccessToken = 'https://hellopiggy.fun/get_access_token'
@@ -19,24 +23,29 @@ export default class Plaid extends React.Component {
   componentDidMount () {
     let { user } = this.props
 
-    if (!user.plaid) this.setState({ activity: false })
-    else this.getAuthorization(user.plaid.token)
+    if (user === null || !user.plaid) this.setState({ activity: false })
+    else this.getAuthorization(user.plaid.token, user.plaid.accounts)
   }
 
-  setPlaidToken (token) { firebase.database().ref('users/' + firebase.auth().currentUser.uid + '/plaid').update({ token: token }) }
+  setPlaidToken (token) { return firebase.database().ref('users/' + firebase.auth().currentUser.uid + '/plaid').update({ token: token }) }
 
-  setBankAccount (account) { firebase.database().ref('users/' + firebase.auth().currentUser.uid + '/plaid').update({ account: account }).then(this.props.onComplete()) }
+  setBankAccounts (accounts) { return firebase.database().ref('users/' + firebase.auth().currentUser.uid + '/plaid').update({ accounts: accounts }) }
 
   onMessage (data) { data.metadata && data.metadata.public_token ? this.getAccessToken(data.metadata.public_token) : this.setState({data}) }
 
-  getAuthorization (token) {
+  setBankAccount (accounts, account, add) {
+    let selectedAccounts = add ? R.prepend(account, accounts) : R.without([account], accounts)
+    this.setBankAccounts(selectedAccounts).then(() => this.setState({ accounts: selectedAccounts }))
+  }
+
+  getAuthorization (token, accounts) {
     axios({
       method: 'get',
       url: authorize,
       params: {
         access_token: token
       }
-    }).then((res) => this.setState({ activity: false, data: res.data }))
+    }).then((res) => this.setState({ activity: false, data: res.data, accounts: accounts || [] }))
   }
 
   getAccessToken (token) {
@@ -57,7 +66,7 @@ export default class Plaid extends React.Component {
     let { user } = this.props
     let { data } = this.state
 
-    if (user.plaid || data.accounts) {
+    if (user && (user.plaid || data.accounts)) {
       return this.renderDetails()
     } else {
       return this.renderLogin()
@@ -65,7 +74,7 @@ export default class Plaid extends React.Component {
   }
 
   renderDetails () {
-    const { activity, data } = this.state
+    const { activity, accounts, data } = this.state
 
     if (activity) {
       return (
@@ -73,24 +82,31 @@ export default class Plaid extends React.Component {
       )
     } else {
       const accountsView = data.accounts.map((account) => {
-        return (
-          <View key={account.account_id}>
-            <TouchableHighlight onPress={() => this.setBankAccount(account)}>
-              <View>
-                <Text>{ account.name }</Text>
-                <Text>Balance: {account.balances.current}</Text>
-              </View>
-            </TouchableHighlight>
-          </View>
-        )
+        if (accounts.indexOf(account.account_id) > -1) {
+          return (
+            <Item selected key={account.account_id} onPress={() => this.setBankAccount(accounts, account.account_id, false)} detail={'$' + account.balances.current}>
+              { account.name }
+            </Item>
+          )
+        } else {
+          return (
+            <Item key={account.account_id} onPress={() => this.setBankAccount(accounts, account.account_id, true)} detail={'$' + account.balances.current}>
+              { account.name }
+            </Item>
+          )
+        }
       })
 
       return (
         <View style={styles.container}>
-          <Text>Select Account:</Text>
-          <View>
-            {accountsView}
+          <View style={styles.headerView}>
+            <Text style={styles.header}>Bank Accounts</Text>
           </View>
+          <TableView style={styles.tableView} fontSize={14} tableViewStyle={TableView.Consts.Style.Plain} tableViewCellStyle={TableView.Consts.CellStyle.Subtitle} accessoryType={TableView.Consts.AccessoryType.Checkmark}>
+            <Section>
+              {accountsView}
+            </Section>
+          </TableView>
         </View>
       )
     }
@@ -106,9 +122,9 @@ export default class Plaid extends React.Component {
     } else {
       return (
         <PlaidAuthenticator
-          onMessage={this.onMessage}
+          onMessage={this.onMessage.bind(this)}
           publicKey='70899249dbfcd49ba8df6af8b2df65'
-          env='development'
+          env='sandbox'
           product='transactions'
           clientName='HelloPiggy'
         />
@@ -118,9 +134,25 @@ export default class Plaid extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  'container': {
-    marginTop: 40,
-    alignItems: 'center'
+  container: {
+    height: '100%',
+    backgroundColor: '#EFEFF4'
+  },
+  headerView: {
+    backgroundColor: '#FFF',
+    borderBottomColor: '#8E8E93',
+    borderBottomWidth: 0.5,
+    alignItems: 'center',
+    paddingBottom: 15,
+    paddingTop: 30
+  },
+  header: {
+    fontWeight: 'bold',
+    fontSize: 16
+  },
+  tableView: {
+    flex: 1,
+    marginTop: 5
   },
   centering: {
     top: 0,
