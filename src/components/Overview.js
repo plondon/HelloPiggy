@@ -1,6 +1,7 @@
 import React from 'react'
 import R from 'ramda'
 import moment from 'moment'
+import TabBar from './TabBar'
 import Quotient from './Quotient'
 import { connect } from 'react-redux'
 import { VictoryPie } from 'victory-native'
@@ -77,66 +78,69 @@ class Overview extends React.Component {
       }
 
       return (
-        <ScrollView style={styles.container}>
-          <View style={styles.headerView}>
-            <Text style={styles.headerText}>Totals</Text>
-          </View>
-          <View style={styles.optionSelectView}>
-            <View style={timeframe === 'today' ? styles.optionSelectedView : {}}>
-              <Text onPress={() => this.setState({timeframe: 'today'})}>Today</Text>
+        <View>
+          <ScrollView style={styles.container}>
+            <View style={styles.headerView}>
+              <Text style={styles.headerText}>Totals</Text>
             </View>
-            <View style={timeframe === 'overall' ? styles.optionSelectedView : {}}>
-              <Text onPress={() => this.setState({timeframe: 'overall'})}>Overall</Text>
+            <View style={styles.optionSelectView}>
+              <View style={timeframe === 'today' ? styles.optionSelectedView : {}}>
+                <Text onPress={() => this.setState({timeframe: 'today'})}>Today</Text>
+              </View>
+              <View style={timeframe === 'overall' ? styles.optionSelectedView : {}}>
+                <Text onPress={() => this.setState({timeframe: 'overall'})}>Overall</Text>
+              </View>
             </View>
-          </View>
-          <View style={styles.chartView}>
-            <View style={styles.centerAbsolute}>
-              <Quotient dividend={'$' + format(spent)} divisor={'$' + format(remaining)} />
+            <View style={styles.chartView}>
+              <View style={styles.centerAbsolute}>
+                <Quotient dividend={'$' + format(spent)} divisor={'$' + format(remaining)} />
+              </View>
+              <VictoryPie
+                data={[
+                  { x: 'Spent', y: format(spent, true) },
+                  { x: 'Remaining', y: format(remaining - spent, true) } ]}
+                innerRadius={60}
+                labels={() => ''}
+                width={160} height={160}
+                padding={{ top: 0, bottom: 0 }}
+                colorScale={['#BB2273', '#FFAEBD']} />
             </View>
-            <VictoryPie
-              data={[
-                { x: 'Spent', y: format(spent, true) },
-                { x: 'Remaining', y: format(remaining - spent, true) } ]}
-              innerRadius={60}
-              labels={() => ''}
-              width={160} height={160}
-              padding={{ top: 0, bottom: 0 }}
-              colorScale={['#BB2273', '#FFAEBD']} />
-          </View>
-          <View style={styles.headerView}>
-            <Text style={styles.headerText}>Averages</Text>
-          </View>
-          <View style={styles.optionSelectView}>
-            <View style={styles.optionSelectedView}>
-              <Text>Target</Text>
+            <View style={styles.headerView}>
+              <Text style={styles.headerText}>Averages</Text>
             </View>
-            <View style={styles.optionSelectedView}>
-              <Text>Actual</Text>
+            <View style={styles.optionSelectView}>
+              <View style={styles.optionSelectedView}>
+                <Text>Target</Text>
+              </View>
+              <View style={styles.optionSelectedView}>
+                <Text>Actual</Text>
+              </View>
             </View>
-          </View>
-          <View style={styles.optionValueView}>
-            <Text style={styles.optionValueText}>${ format(dailyTarget) }</Text>
-            <Text style={styles.optionValueText}>${ format(dailyActual) }</Text>
-          </View>
-          <View style={styles.headerView}>
-            <Text style={styles.headerText}>Recent Transactions</Text>
-          </View>
-          <View>
-            {
-              R.take(5)(totalTransactions).map((tx, i) => {
-                return (
-                  <View key={i} style={styles.transactionView}>
-                    <Text style={styles.transactionName}>{tx.name}</Text>
-                    <Text style={styles.transactionAmount}>${tx.amount}</Text>
-                  </View>
-                )
-              })
-            }
-          </View>
-          <View style={styles.moreOptionsView}>
-            <Text style={styles.moreOptionsText} onPress={() => this.showActions()}>More Options</Text>
-          </View>
-        </ScrollView>
+            <View style={styles.optionValueView}>
+              <Text style={styles.optionValueText}>${ format(dailyTarget) }</Text>
+              <Text style={styles.optionValueText}>${ format(dailyActual) }</Text>
+            </View>
+            <View style={styles.headerView}>
+              <Text style={styles.headerText}>Recent Transactions</Text>
+            </View>
+            <View>
+              {
+                R.take(5)(totalTransactions).map((tx, i) => {
+                  return (
+                    <View key={i} style={styles.transactionView}>
+                      <Text style={styles.transactionName}>{tx.name}</Text>
+                      <Text style={styles.transactionAmount}>${tx.amount}</Text>
+                    </View>
+                  )
+                })
+              }
+            </View>
+            <View style={styles.moreOptionsView}>
+              <Text style={styles.moreOptionsText} onPress={() => this.showActions()}>More Options</Text>
+            </View>
+          </ScrollView>
+          <TabBar />
+        </View>
       )
     } else {
       return (

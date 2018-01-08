@@ -10,11 +10,12 @@ class MainContainer extends React.Component {
     let { user, route } = this.props
     let plaidComplete = user && user.plaid && user.plaid.token && user.plaid.accounts
 
-    if (user && !plaidComplete) {
-      route = 'Plaid'
+    if (!route) {
+      if (user && !plaidComplete) route = 'Plaid'
+      else if (user) route = 'Home'
     }
 
-    if (user) {
+    if (route === 'Plaid') {
       return (
         <Plaid user={user} />
       )
