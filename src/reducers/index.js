@@ -30,7 +30,6 @@ const dataReducer = (state = {}, action) => {
 }
 
 const routeReducer = (state = {}, action) => {
-  console.log(action)
   switch (action.type) {
     case 'ROUTE_TO':
       return {

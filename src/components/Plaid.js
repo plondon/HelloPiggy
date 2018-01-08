@@ -126,7 +126,7 @@ export default class Plaid extends React.Component {
         <PlaidAuthenticator
           onMessage={this.onMessage.bind(this)}
           publicKey='70899249dbfcd49ba8df6af8b2df65'
-          env='sandbox'
+          env='development'
           product='transactions'
           clientName='HelloPiggy'
         />

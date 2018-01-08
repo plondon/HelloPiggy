@@ -8,7 +8,7 @@ export function getTransactions (opts) {
   let endDate = moment()
   let startDate = getLastPayDay()
 
-  let { token, accounts } = opts.data
+  let { token, accountIds } = opts.data
 
   return axios({
     method: 'post',
@@ -17,7 +17,7 @@ export function getTransactions (opts) {
       access_token: token,
       start_date: startDate.format('YYYY-MM-DD'),
       end_date: endDate.format('YYYY-MM-DD'),
-      options: { account_ids: accounts }
+      options: { account_ids: accountIds }
     }
   })
 }
