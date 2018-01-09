@@ -78,65 +78,67 @@ class Overview extends React.Component {
       }
 
       return (
-        <View>
+        <View style={{flex: 1}}>
           <ScrollView style={styles.container}>
-            <View style={styles.headerView}>
-              <Text style={styles.headerText}>Totals</Text>
-            </View>
-            <View style={styles.optionSelectView}>
-              <View style={timeframe === 'today' ? styles.optionSelectedView : {}}>
-                <Text onPress={() => this.setState({timeframe: 'today'})}>Today</Text>
-              </View>
-              <View style={timeframe === 'overall' ? styles.optionSelectedView : {}}>
-                <Text onPress={() => this.setState({timeframe: 'overall'})}>Overall</Text>
-              </View>
-            </View>
-            <View style={styles.chartView}>
-              <View style={styles.centerAbsolute}>
-                <Quotient dividend={'$' + format(spent)} divisor={'$' + format(remaining)} />
-              </View>
-              <VictoryPie
-                data={[
-                  { x: 'Spent', y: format(spent, true) },
-                  { x: 'Remaining', y: format(remaining - spent, true) } ]}
-                innerRadius={60}
-                labels={() => ''}
-                width={160} height={160}
-                padding={{ top: 0, bottom: 0 }}
-                colorScale={['#BB2273', '#FFAEBD']} />
-            </View>
-            <View style={styles.headerView}>
-              <Text style={styles.headerText}>Averages</Text>
-            </View>
-            <View style={styles.optionSelectView}>
-              <View style={styles.optionSelectedView}>
-                <Text>Target</Text>
-              </View>
-              <View style={styles.optionSelectedView}>
-                <Text>Actual</Text>
-              </View>
-            </View>
-            <View style={styles.optionValueView}>
-              <Text style={styles.optionValueText}>${ format(dailyTarget) }</Text>
-              <Text style={styles.optionValueText}>${ format(dailyActual) }</Text>
-            </View>
-            <View style={styles.headerView}>
-              <Text style={styles.headerText}>Recent Transactions</Text>
-            </View>
             <View>
-              {
-                R.take(5)(totalTransactions).map((tx, i) => {
-                  return (
-                    <View key={i} style={styles.transactionView}>
-                      <Text style={styles.transactionName}>{tx.name}</Text>
-                      <Text style={styles.transactionAmount}>${tx.amount}</Text>
-                    </View>
-                  )
-                })
-              }
-            </View>
-            <View style={styles.moreOptionsView}>
-              <Text style={styles.moreOptionsText} onPress={() => this.showActions()}>More Options</Text>
+              <View style={styles.headerView}>
+                <Text style={styles.headerText}>Totals</Text>
+              </View>
+              <View style={styles.optionSelectView}>
+                <View style={timeframe === 'today' ? styles.optionSelectedView : {}}>
+                  <Text onPress={() => this.setState({timeframe: 'today'})}>Today</Text>
+                </View>
+                <View style={timeframe === 'overall' ? styles.optionSelectedView : {}}>
+                  <Text onPress={() => this.setState({timeframe: 'overall'})}>Overall</Text>
+                </View>
+              </View>
+              <View style={styles.chartView}>
+                <View style={styles.centerAbsolute}>
+                  <Quotient dividend={'$' + format(spent)} divisor={'$' + format(remaining)} />
+                </View>
+                <VictoryPie
+                  data={[
+                    { x: 'Spent', y: format(spent, true) },
+                    { x: 'Remaining', y: format(remaining - spent, true) } ]}
+                  innerRadius={60}
+                  labels={() => ''}
+                  width={160} height={160}
+                  padding={{ top: 0, bottom: 0 }}
+                  colorScale={['#BB2273', '#FFAEBD']} />
+              </View>
+              <View style={styles.headerView}>
+                <Text style={styles.headerText}>Averages</Text>
+              </View>
+              <View style={styles.optionSelectView}>
+                <View style={styles.optionSelectedView}>
+                  <Text>Target</Text>
+                </View>
+                <View style={styles.optionSelectedView}>
+                  <Text>Actual</Text>
+                </View>
+              </View>
+              <View style={styles.optionValueView}>
+                <Text style={styles.optionValueText}>${ format(dailyTarget) }</Text>
+                <Text style={styles.optionValueText}>${ format(dailyActual) }</Text>
+              </View>
+              <View style={styles.headerView}>
+                <Text style={styles.headerText}>Recent Transactions</Text>
+              </View>
+              <View>
+                {
+                  R.take(5)(totalTransactions).map((tx, i) => {
+                    return (
+                      <View key={i} style={styles.transactionView}>
+                        <Text style={styles.transactionName}>{tx.name}</Text>
+                        <Text style={styles.transactionAmount}>${tx.amount}</Text>
+                      </View>
+                    )
+                  })
+                }
+              </View>
+              <View style={styles.moreOptionsView}>
+                <Text style={styles.moreOptionsText} onPress={() => this.showActions()}>More Options</Text>
+              </View>
             </View>
           </ScrollView>
           <TabBar />
@@ -162,7 +164,7 @@ export default connect(mapStateToProps)(Overview)
 
 const styles = StyleSheet.create({
   'container': {
-    height: '100%',
+    flex: 1,
     backgroundColor: '#F8F7F5'
   },
   'headerView': {

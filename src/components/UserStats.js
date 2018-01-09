@@ -1,6 +1,7 @@
 import React from 'react'
 import * as firebase from 'firebase'
 import { format } from '../services/helpers'
+import TabBar from './TabBar'
 import TableView from 'react-native-tableview'
 import { Dimensions, ScrollView, StyleSheet, Slider, Text, View } from 'react-native'
 
@@ -111,6 +112,7 @@ export default class UserStats extends React.Component {
             </TableView>
           </View>
         </ScrollView>
+        <TabBar />
       </View>
     )
   }
@@ -155,7 +157,7 @@ const styles = StyleSheet.create({
   },
   'settingContainer': {
     height: '100%',
-    paddingTop: 30,
+    paddingTop: 20,
     borderTopWidth: 0.5,
     borderTopColor: '#CECED2',
     backgroundColor: '#EFEFF4'
@@ -205,7 +207,7 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   'tableView': {
-    flex: 1
+    height: 100
   },
   'tableItem': {
     fontSize: 14
