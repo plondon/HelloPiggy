@@ -40,7 +40,7 @@ export const fetchTxSuccess = (opts) => ({
   data: opts.data
 })
 
-export const routeTo = (opts) => ({
+export const routeTo = (route) => ({
   type: ROUTE_TO,
-  data: opts.route
+  data: route
 })

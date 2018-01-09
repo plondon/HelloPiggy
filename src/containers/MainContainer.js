@@ -8,12 +8,6 @@ import UserStats from '../components/UserStats'
 class MainContainer extends React.Component {
   render () {
     let { user, route } = this.props
-    let plaidComplete = user && user.plaid && user.plaid.token && user.plaid.accounts
-
-    if (!route) {
-      if (user && !plaidComplete) route = 'Plaid'
-      else if (user) route = 'Home'
-    }
 
     if (route === 'Plaid') {
       return (

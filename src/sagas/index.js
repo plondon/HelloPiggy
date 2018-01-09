@@ -2,14 +2,20 @@ import { getTransactions } from '../services/plaid'
 import { onLogin, getCurrentAccessToken } from '../services/facebook'
 import { onAuthStateChanged, onFacebookLogin, getSnapshot } from '../services/firebase'
 import { call, put, takeEvery, all } from 'redux-saga/effects'
-import { fetchData, fetchUserSuccess, fetchFailure, fetchTxSuccess } from '../actions'
+import { fetchData, fetchUserSuccess, fetchFailure, fetchTxSuccess, routeTo } from '../actions'
 
 export function * checkActiveUser () {
   yield put(fetchData())
   const user = yield call(onAuthStateChanged)
   if (user) {
     const snapshot = yield call(getSnapshot, user)
-    yield put(fetchUserSuccess(snapshot))
+    const currentUser = snapshot.val()
+    const plaid = currentUser.plaid
+    const plaidComplete = plaid && plaid.token && plaid.accounts
+    let route = !plaidComplete ? 'Plaid' : 'Home'
+
+    yield put(fetchUserSuccess(currentUser))
+    yield put(routeTo(route))
   } else {
     yield put(fetchFailure())
   }
