@@ -15,18 +15,18 @@ class TabBar extends React.Component {
     const { route } = this.props
 
     return (
-      <TabBarIOS style={{height: 100}}>
+      <TabBarIOS>
         { items.map((item, i) => {
           if (item.name === route) {
             return (
               <Icon.TabBarItem key={i} onPress={() => this.props.dispatch(routeTo(item.name))} title={item.name} iconName={item.selectedIcon} selected>
-                {item.name}
+                <Text>{item.name}</Text>
               </Icon.TabBarItem>
             )
           } else {
             return (
               <Icon.TabBarItem key={i} onPress={() => this.props.dispatch(routeTo(item.name))} title={item.name} iconName={item.icon}>
-                {item.name}
+                <Text>{item.name}</Text>
               </Icon.TabBarItem>
             )
           }
