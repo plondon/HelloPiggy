@@ -1,7 +1,6 @@
 import React from 'react'
 import * as firebase from 'firebase'
 import { format } from '../services/helpers'
-import TabBar from './TabBar'
 import TableView from 'react-native-tableview'
 import { Dimensions, ScrollView, StyleSheet, Slider, Text, View } from 'react-native'
 
@@ -112,7 +111,6 @@ export default class UserStats extends React.Component {
             </TableView>
           </View>
         </ScrollView>
-        <TabBar />
       </View>
     )
   }

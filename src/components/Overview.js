@@ -1,7 +1,6 @@
 import React from 'react'
 import R from 'ramda'
 import moment from 'moment'
-import TabBar from './TabBar'
 import Quotient from './Quotient'
 import { connect } from 'react-redux'
 import { VictoryPie } from 'victory-native'
@@ -141,7 +140,6 @@ class Overview extends React.Component {
               </View>
             </View>
           </ScrollView>
-          <TabBar />
         </View>
       )
     } else {

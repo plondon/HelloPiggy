@@ -4,6 +4,8 @@ import { onAuthStateChanged, onFacebookLogin, getSnapshot } from '../services/fi
 import { call, put, takeEvery, all } from 'redux-saga/effects'
 import { fetchData, fetchUserSuccess, fetchFailure, fetchTxSuccess, routeTo } from '../actions'
 
+const plaidComplete = (plaid) => plaid && plaid.token && plaid.accounts
+
 export function * checkActiveUser () {
   yield put(fetchData())
   const user = yield call(onAuthStateChanged)
@@ -11,8 +13,7 @@ export function * checkActiveUser () {
     const snapshot = yield call(getSnapshot, user)
     const currentUser = snapshot.val()
     const plaid = currentUser.plaid
-    const plaidComplete = plaid && plaid.token && plaid.accounts
-    let route = !plaidComplete ? 'Plaid' : 'Home'
+    let route = !plaidComplete(plaid) ? 'Plaid' : 'Home'
 
     yield put(fetchUserSuccess(currentUser))
     yield put(routeTo(route))
@@ -35,7 +36,11 @@ export function * handleFacebookLogin () {
       const token = yield call(getCurrentAccessToken)
       const user = yield call(onFacebookLogin, token)
       const snapshot = yield call(getSnapshot, user)
-      yield put(fetchUserSuccess(snapshot))
+      const currentUser = snapshot.val()
+      const plaid = currentUser.plaid
+      let route = !plaidComplete(plaid) ? 'Plaid' : 'Home'
+      yield put(fetchUserSuccess(currentUser))
+      yield put(routeTo(route))
     } catch (e) {
       yield put(fetchFailure(e))
     }

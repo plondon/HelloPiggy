@@ -1,30 +1,34 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { routeTo } from '../actions'
 import Auth from '../components/Auth'
 import Plaid from '../components/Plaid'
 import Overview from '../components/Overview'
 import UserStats from '../components/UserStats'
+import { TabBarIOS } from 'react-native'
+import Icon from 'react-native-vector-icons/Ionicons'
 
 class MainContainer extends React.Component {
   render () {
     let { user, route } = this.props
 
-    if (route === 'Plaid') {
+    if (route === 'Settings' || route === 'Home') {
       return (
-        <Plaid user={user} />
-      )
-    } else if (route === 'Settings') {
-      return (
-        <UserStats user={user} />
-      )
-    } else if (route === 'Home') {
-      return (
-        <Overview user={user} />
+        <TabBarIOS>
+          <Icon.TabBarItem onPress={() => this.props.dispatch(routeTo('Settings'))} title={'Settings'} iconName={'ios-cog'} selected={route === 'Settings'}>
+            <UserStats user={user} />
+          </Icon.TabBarItem>
+          <Icon.TabBarItem onPress={() => this.props.dispatch(routeTo('Home'))} title={'Home'} iconName={'ios-home-outline'} selected={route === 'Home'}>
+            <Overview user={user} />
+          </Icon.TabBarItem>
+        </TabBarIOS>
       )
     } else {
-      return (
-        <Auth />
-      )
+      if (route === 'Plaid') {
+        return (<Plaid />)
+      } else {
+        return (<Auth />)
+      }
     }
   }
 }

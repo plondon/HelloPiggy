@@ -2,7 +2,6 @@ import React from 'react'
 import axios from 'axios'
 import R from 'ramda'
 import * as firebase from 'firebase'
-import TabBar from './TabBar'
 import TableView from 'react-native-tableview'
 import PlaidAuthenticator from 'react-native-plaid-link'
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
@@ -108,7 +107,6 @@ export default class Plaid extends React.Component {
               {accountsView}
             </Section>
           </TableView>
-          <TabBar />
         </View>
       )
     }
