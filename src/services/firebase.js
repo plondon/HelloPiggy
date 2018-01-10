@@ -14,3 +14,7 @@ export function onFacebookLogin (data) {
 export function getSnapshot (user) {
   return firebase.database().ref('users/' + user.uid).once('value')
 }
+
+export function updateUser (user, settings) {
+  firebase.database().ref('users/' + user.uid).update({ settings: settings })
+}

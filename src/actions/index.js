@@ -5,6 +5,7 @@ const CHECK_ACTIVE_USER = 'CHECK_ACTIVE_USER'
 const HANDLE_TRANSACTIONS = 'HANDLE_TRANSACTIONS'
 const FETCH_TX_SUCCESS = 'FETCH_TX_SUCCESS'
 
+const UPDATE_USER = 'UPDATE_USER'
 const HANDLE_FACEBOOK_LOGIN = 'HANDLE_FACEBOOK_LOGIN'
 
 const ROUTE_TO = 'ROUTE_TO'
@@ -38,6 +39,11 @@ export const handleTransactions = (opts) => ({
 export const fetchTxSuccess = (opts) => ({
   type: FETCH_TX_SUCCESS,
   data: opts.data
+})
+
+export const updateUser = (user, settings) => ({
+  type: UPDATE_USER,
+  data: { user, settings }
 })
 
 export const routeTo = (route) => ({

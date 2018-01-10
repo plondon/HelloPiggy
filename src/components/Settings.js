@@ -1,5 +1,7 @@
 import React from 'react'
 import * as firebase from 'firebase'
+import { connect } from 'react-redux'
+import { updateUser } from '../actions'
 import { format } from '../services/helpers'
 import TableView from 'react-native-tableview'
 import { Dimensions, ScrollView, StyleSheet, Slider, Text, View } from 'react-native'
@@ -29,20 +31,20 @@ let settingsMap = {
   }
 }
 
-export default class Settings extends React.Component {
+class Settings extends React.Component {
   constructor () {
     super()
     this.state = {}
   }
 
   componentDidMount () {
-    const { stats } = this.props.user
+    const { settings } = this.props.user
 
     this.setState({
-      netIncome: (stats && stats.netIncome) || DEFAULT,
-      payFrequency: (stats && stats.payFrequency) || 'semiMonthly',
-      savingsGoal: (stats && stats.savingsGoal) || DEFAULT,
-      expenses: (stats && stats.expenses) || DEFAULT
+      netIncome: (settings && settings.netIncome) || DEFAULT,
+      payFrequency: (settings && settings.payFrequency) || 'semiMonthly',
+      savingsGoal: (settings && settings.savingsGoal) || DEFAULT,
+      expenses: (settings && settings.expenses) || DEFAULT
     })
   }
 
@@ -50,17 +52,7 @@ export default class Settings extends React.Component {
     let user = firebase.auth().currentUser
     let { netIncome, payFrequency, savingsGoal, expenses } = this.state
 
-    firebase.database().ref('users/' + user.uid).update({
-      username: user.displayName,
-      email: user.email,
-      picture: user.photoURL,
-      stats: {
-        netIncome: netIncome,
-        payFrequency: payFrequency,
-        savingsGoal: savingsGoal,
-        expenses: expenses
-      }
-    })
+    this.props.dispatch(updateUser(user, { netIncome, payFrequency, savingsGoal, expenses }))
   }
 
   updateStat (stat, val) {
@@ -115,6 +107,14 @@ export default class Settings extends React.Component {
     )
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    user: state.dataReducer.user
+  }
+}
+
+export default connect(mapStateToProps)(Settings)
 
 const styles = StyleSheet.create({
   'headerScroll': {

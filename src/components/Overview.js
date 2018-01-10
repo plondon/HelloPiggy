@@ -39,7 +39,7 @@ class Overview extends React.Component {
   render () {
     const { timeframe } = this.state
     const { isFetching, transactions } = this.props
-    const { netIncome, payFrequency, savingsGoal, expenses } = this.props.user.stats
+    const { netIncome, payFrequency, savingsGoal, expenses } = this.props.user.settings
 
     if (!isFetching && transactions) {
       let today = moment()

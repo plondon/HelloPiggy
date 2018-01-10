@@ -1,10 +1,15 @@
 import { getTransactions } from '../services/plaid'
 import { onLogin, getCurrentAccessToken } from '../services/facebook'
-import { onAuthStateChanged, onFacebookLogin, getSnapshot } from '../services/firebase'
+import { onAuthStateChanged, onFacebookLogin, getSnapshot, updateUser } from '../services/firebase'
 import { call, put, takeEvery, all } from 'redux-saga/effects'
 import { fetchData, fetchUserSuccess, fetchFailure, fetchTxSuccess, routeTo } from '../actions'
 
 const plaidComplete = (plaid) => plaid && plaid.token && plaid.accounts
+const determineRoute = (currentUser) => {
+  if (!plaidComplete(currentUser.plaid)) return 'Plaid'
+  else if (!currentUser.settings) return 'Settings'
+  else return 'Home'
+}
 
 export function * checkActiveUser () {
   yield put(fetchData())
@@ -12,9 +17,7 @@ export function * checkActiveUser () {
   if (user) {
     const snapshot = yield call(getSnapshot, user)
     const currentUser = snapshot.val()
-    const plaid = currentUser.plaid
-    let route = !plaidComplete(plaid) ? 'Plaid' : 'Home'
-
+    const route = determineRoute(currentUser)
     yield put(fetchUserSuccess(currentUser))
     yield put(routeTo(route))
   } else {
@@ -37,8 +40,7 @@ export function * handleFacebookLogin () {
       const user = yield call(onFacebookLogin, token)
       const snapshot = yield call(getSnapshot, user)
       const currentUser = snapshot.val()
-      const plaid = currentUser.plaid
-      let route = !plaidComplete(plaid) ? 'Plaid' : 'Home'
+      let route = determineRoute(currentUser)
       yield put(fetchUserSuccess(currentUser))
       yield put(routeTo(route))
     } catch (e) {
@@ -49,6 +51,17 @@ export function * handleFacebookLogin () {
 
 export function * watchHandleFacebookLogin () {
   yield takeEvery('HANDLE_FACEBOOK_LOGIN', handleFacebookLogin)
+}
+
+export function * handleUpdateUser (opts) {
+  yield call(updateUser, opts.data.user, opts.data.settings)
+  const snapshot = yield call(getSnapshot, opts.data.user)
+  const currentUser = snapshot.val()
+  yield put(fetchUserSuccess(currentUser))
+}
+
+export function * watchUpdateUser () {
+  yield takeEvery('UPDATE_USER', handleUpdateUser)
 }
 
 export function * handleTransactions (opts) {
@@ -67,6 +80,7 @@ export function * watchHandleTransactions () {
 
 export default function * rootSaga () {
   yield all([
+    watchUpdateUser(),
     watchCheckActiveUser(),
     watchHandleFacebookLogin(),
     watchHandleTransactions()
