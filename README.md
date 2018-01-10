@@ -16,8 +16,7 @@ Round 2 Features
 
 Round 3 Features
 - [ ] Branding / Login page cleanup
-- [ ] "More Options" (Add Payment)
-- [ ] TabBar
+- [x] TabBar
 - [x] Loading states
 - [x] Color Palette
 - [x] Better user stats forms (cleaner and amt slider)
@@ -25,7 +24,8 @@ Round 3 Features
 - [x] Clean up overview logic and add better edge case support
 
 Round 4 Features
-- [ ] Consider changing UserStats to 'Settings'
+- [x] Consider changing UserStats to 'Settings'
+- [ ] "More" Tab (See Tomorrow)
 - [ ] Make landing page on hellopiggy.fun
 - [ ] Replace plaid with free service
 - [ ] Transitions
