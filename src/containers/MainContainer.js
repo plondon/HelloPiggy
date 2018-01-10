@@ -4,7 +4,7 @@ import { routeTo } from '../actions'
 import Auth from '../components/Auth'
 import Plaid from '../components/Plaid'
 import Overview from '../components/Overview'
-import UserStats from '../components/UserStats'
+import Settings from '../components/Settings'
 import { TabBarIOS } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 
@@ -16,7 +16,7 @@ class MainContainer extends React.Component {
       return (
         <TabBarIOS>
           <Icon.TabBarItem onPress={() => this.props.dispatch(routeTo('Settings'))} title={'Settings'} iconName={'ios-cog'} selected={route === 'Settings'}>
-            <UserStats user={user} />
+            <Settings user={user} />
           </Icon.TabBarItem>
           <Icon.TabBarItem onPress={() => this.props.dispatch(routeTo('Home'))} title={'Home'} iconName={'ios-home-outline'} selected={route === 'Home'}>
             <Overview user={user} />

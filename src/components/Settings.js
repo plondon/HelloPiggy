@@ -29,7 +29,7 @@ let settingsMap = {
   }
 }
 
-export default class UserStats extends React.Component {
+export default class Settings extends React.Component {
   constructor () {
     super()
     this.state = {}
