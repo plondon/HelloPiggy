@@ -1,6 +1,6 @@
 import { getTransactions } from '../services/plaid'
-import { onLogin, getCurrentAccessToken } from '../services/facebook'
-import { onAuthStateChanged, onFacebookLogin, getSnapshot, updateUser } from '../services/firebase'
+import { facebookLogin, getCurrentAccessToken } from '../services/facebook'
+import { onAuthStateChanged, onFacebookLogin, getSnapshot, updateUser, onGoogleLogin } from '../services/firebase'
 import { call, put, takeEvery, all } from 'redux-saga/effects'
 import { fetchData, fetchUserSuccess, fetchFailure, fetchTxSuccess, routeTo } from '../actions'
 
@@ -31,7 +31,7 @@ export function * watchCheckActiveUser () {
 
 export function * handleFacebookLogin () {
   yield put(fetchData())
-  const login = yield call(onLogin)
+  const login = yield call(facebookLogin)
   if (login.isCancelled) {
     yield put(fetchFailure())
   } else {
@@ -51,6 +51,16 @@ export function * handleFacebookLogin () {
 
 export function * watchHandleFacebookLogin () {
   yield takeEvery('HANDLE_FACEBOOK_LOGIN', handleFacebookLogin)
+}
+
+export function * handleGoogleLogin () {
+  yield put(fetchData())
+  const login = yield call(onGoogleLogin)
+  console.log(login)
+}
+
+export function * watchHandleGoogleLogin () {
+  yield takeEvery('HANDLE_GOOGLE_LOGIN', handleGoogleLogin)
 }
 
 export function * handleUpdateUser (opts) {
@@ -83,6 +93,7 @@ export default function * rootSaga () {
     watchUpdateUser(),
     watchCheckActiveUser(),
     watchHandleFacebookLogin(),
+    watchHandleGoogleLogin(),
     watchHandleTransactions()
   ])
 }

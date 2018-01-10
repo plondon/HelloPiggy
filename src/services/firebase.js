@@ -6,6 +6,12 @@ export function onAuthStateChanged () {
   })
 }
 
+export function onGoogleLogin () {
+  const provider = firebase.auth.GoogleAuthProvider()
+  provider.addScope('email')
+  return firebase.auth().signInWithPopup(provider)
+}
+
 export function onFacebookLogin (data) {
   const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
   return firebase.auth().signInWithCredential(credential)

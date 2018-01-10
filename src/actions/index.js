@@ -7,6 +7,7 @@ const FETCH_TX_SUCCESS = 'FETCH_TX_SUCCESS'
 
 const UPDATE_USER = 'UPDATE_USER'
 const HANDLE_FACEBOOK_LOGIN = 'HANDLE_FACEBOOK_LOGIN'
+const HANDLE_GOOGLE_LOGIN = 'HANDLE_GOOGLE_LOGIN'
 
 const ROUTE_TO = 'ROUTE_TO'
 
@@ -29,6 +30,10 @@ export const checkActiveUser = () => ({
 
 export const handleFacebookLogin = () => ({
   type: HANDLE_FACEBOOK_LOGIN
+})
+
+export const handleGoogleLogin = () => ({
+  type: HANDLE_GOOGLE_LOGIN
 })
 
 export const handleTransactions = (opts) => ({

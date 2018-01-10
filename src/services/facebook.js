@@ -4,7 +4,7 @@ const {
   AccessToken
 } = FBSDK
 
-export function onLogin () {
+export function facebookLogin () {
   return LoginManager.logInWithReadPermissions(['email'])
 }
 
