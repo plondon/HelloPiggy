@@ -1,10 +1,7 @@
 import React from 'react'
-import FBSDK from 'react-native-fbsdk'
 import { connect } from 'react-redux'
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import { checkActiveUser, handleFacebookLogin, handleGoogleLogin } from '../actions'
-
-const { LoginButton } = FBSDK
 
 class Auth extends React.Component {
   componentDidMount () {
@@ -33,7 +30,9 @@ class Auth extends React.Component {
             <Text style={styles.header}>🐷HelloPiggy</Text>
           </View>
           <View style={styles.centering}>
-            <LoginButton onPress={() => this.handleFacebookLogin()} />
+            <View>
+              <Text onPress={() => this.handleFacebookLogin()}>Facebook</Text>
+            </View>
             <View style={styles.orView}>
               <Text style={styles.or}>Or</Text>
             </View>
