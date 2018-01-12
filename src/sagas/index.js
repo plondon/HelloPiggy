@@ -1,12 +1,13 @@
 import { getTransactions } from '../services/plaid'
+import { googleLogin } from '../services/google'
 import { facebookLogin, getCurrentAccessToken } from '../services/facebook'
-import { onAuthStateChanged, onFacebookLogin, getSnapshot, updateUser, onGoogleLogin } from '../services/firebase'
+import { onAuthStateChanged, onFacebookLogin, onGoogleLogin, getSnapshot, updateUser } from '../services/firebase'
 import { call, put, takeEvery, all } from 'redux-saga/effects'
 import { fetchData, fetchUserSuccess, fetchFailure, fetchTxSuccess, routeTo } from '../actions'
 
 const plaidComplete = (plaid) => plaid && plaid.token && plaid.accounts
 const determineRoute = (currentUser) => {
-  if (!plaidComplete(currentUser.plaid)) return 'Plaid'
+  if (!currentUser || !plaidComplete(currentUser.plaid)) return 'Plaid'
   else if (!currentUser.settings) return 'Settings'
   else return 'Home'
 }
@@ -55,8 +56,17 @@ export function * watchHandleFacebookLogin () {
 
 export function * handleGoogleLogin () {
   yield put(fetchData())
-  const login = yield call(onGoogleLogin)
-  console.log(login)
+  const login = yield call(googleLogin)
+  try {
+    const user = yield call(onGoogleLogin, login)
+    const snapshot = yield call(getSnapshot, user)
+    const currentUser = snapshot.val()
+    let route = determineRoute(currentUser)
+    yield put(fetchUserSuccess(currentUser))
+    yield put(routeTo(route))
+  } catch (e) {
+    yield put(fetchFailure(e))
+  }
 }
 
 export function * watchHandleGoogleLogin () {

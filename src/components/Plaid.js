@@ -23,7 +23,7 @@ export default class Plaid extends React.Component {
   componentDidMount () {
     let { user } = this.props
 
-    if (user === null || !user.plaid) this.setState({ activity: false })
+    if (user == null || (user && !user.plaid)) this.setState({ activity: false })
     else this.getAuthorization(user.plaid.token, user.plaid.accounts)
   }
 

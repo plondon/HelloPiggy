@@ -31,7 +31,7 @@ class Auth extends React.Component {
           </View>
           <View style={styles.centering}>
             <View>
-              <Text onPress={() => this.handleFacebookLogin()}>Facebook</Text>
+              <Text onPress={() => this.handleFacebookLogin()}>Login with Facebook</Text>
             </View>
             <View style={styles.orView}>
               <Text style={styles.or}>Or</Text>
