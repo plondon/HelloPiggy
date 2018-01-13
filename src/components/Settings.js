@@ -18,14 +18,20 @@ let payFrequencyMap = {
 
 let settingsMap = {
   'netIncome': {
+    min: 500,
+    max: 4500,
     label: (val) => 'Take Home Pay: $' + format(val),
     helper: 'Your take home pay is the amount you receive each paycheck after taxes and deductions.'
   },
   'savingsGoal': {
+    min: 0,
+    max: 3000,
     label: (val) => 'Savings Goal: $' + format(val),
     helper: 'Your savings goal is simple. How much do you want to save each month?'
   },
   'expenses': {
+    min: 500,
+    max: 4500,
     label: (val) => 'Monthly Expenses: $' + format(val),
     helper: 'Your monthly expenses include things like your rent, electricity, or skincare product addiction.'
   }
@@ -82,7 +88,7 @@ class Settings extends React.Component {
                       <View style={styles.labelView}>
                         <Text style={styles.label}>{settingsMap[setting].label(this.state[setting])}</Text>
                       </View>
-                      <Slider style={styles.slider} step={10} minimumValue={500} maximumValue={4500} value={this.state[setting]} onValueChange={this.updateStat.bind(this, setting)} />
+                      <Slider style={styles.slider} step={10} minimumValue={settingsMap[setting].min} maximumValue={settingsMap[setting].max} value={this.state[setting]} onValueChange={this.updateStat.bind(this, setting)} />
                       <Text style={styles.helper}>{settingsMap[setting].helper}</Text>
                     </View>
                   </View>
