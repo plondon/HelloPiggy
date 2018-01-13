@@ -1,9 +1,9 @@
 import React from 'react'
 import * as firebase from 'firebase'
 import { connect } from 'react-redux'
-import { updateUser } from '../actions'
 import { format } from '../services/helpers'
 import TableView from 'react-native-tableview'
+import { updateUser, routeTo } from '../actions'
 import { Dimensions, ScrollView, StyleSheet, Slider, Text, View } from 'react-native'
 
 const { Item, Section } = TableView
@@ -93,12 +93,18 @@ class Settings extends React.Component {
             <View>
               <Text style={styles.tableLabel}>Pay Frequency</Text>
             </View>
-            <TableView style={styles.tableView} fontSize={14} tableViewStyle={TableView.Consts.Style.Plain}>
+            <TableView style={styles.payFrequencyTableView} fontSize={14} tableViewStyle={TableView.Consts.Style.Plain}>
               <Section>
                 { Object.keys(payFrequencyMap).map((pf, i) => {
                   if (pf === this.state.payFrequency) return <Item key={i} onPress={this.updateStat.bind(this, 'payFrequency', pf)} selected>{payFrequencyMap[pf]}</Item>
                   else return <Item key={i} onPress={this.updateStat.bind(this, 'payFrequency', pf)}>{payFrequencyMap[pf]}</Item>
                 }) }
+              </Section>
+            </TableView>
+
+            <TableView style={styles.bankAccountTableView} fontSize={14} tableViewStyle={TableView.Consts.Style.Plain}>
+              <Section>
+                <Item onPress={() => this.props.dispatch(routeTo('Plaid'))}>Change Bank Account</Item>
               </Section>
             </TableView>
           </View>
@@ -173,7 +179,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     borderTopColor: '#CECED2',
     borderBottomColor: '#CECED2',
-    backgroundColor: '#F8F7F5',
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 0.5,
     borderTopWidth: 0.5
   },
@@ -204,10 +210,10 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 14
   },
-  'tableView': {
-    height: 100
+  'payFrequencyTableView': {
+    height: 90
   },
-  'tableItem': {
-    fontSize: 14
+  'bankAccountTableView': {
+    height: 90
   }
 })

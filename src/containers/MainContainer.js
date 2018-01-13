@@ -25,7 +25,7 @@ class MainContainer extends React.Component {
       )
     } else {
       if (route === 'Plaid') {
-        return (<Plaid />)
+        return (<Plaid user={user} />)
       } else {
         return (<Auth />)
       }
