@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import { checkActiveUser, handleFacebookLogin, handleGoogleLogin } from '../actions'
+import { ActivityIndicator, StyleSheet, Text, TouchableHighlight, View } from 'react-native'
 
 class Auth extends React.Component {
   componentDidMount () {
@@ -30,15 +30,15 @@ class Auth extends React.Component {
             <Text style={styles.header}>🐷HelloPiggy</Text>
           </View>
           <View style={styles.centering}>
-            <View>
-              <Text onPress={() => this.handleFacebookLogin()}>Login with Facebook</Text>
-            </View>
+            <TouchableHighlight style={styles.facebookButton}>
+              <Text style={styles.facebookButtonText} onPress={() => this.handleFacebookLogin()}>Login with Facebook</Text>
+            </TouchableHighlight>
             <View style={styles.orView}>
               <Text style={styles.or}>Or</Text>
             </View>
-            <View>
+            <TouchableHighlight>
               <Text onPress={() => this.handleGoogleLogin()}>Login with Google+</Text>
-            </View>
+            </TouchableHighlight>
           </View>
         </View>
       )
@@ -65,6 +65,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontWeight: 'bold',
     color: '#F8F7F5'
+  },
+  'facebookButton': {
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingRight: 7,
+    paddingLeft: 7,
+    borderRadius: 2,
+    backgroundColor: '#4267b2'
+  },
+  'facebookButtonText': {
+    fontSize: 14,
+    color: '#FFFFFF'
   },
   'orView': {
     marginTop: 10,

@@ -6,7 +6,6 @@ import com.facebook.react.ReactApplication;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.magus.fblogin.FacebookLoginPackage;
-import com.horcrux.svg.SvgPackage;
 import io.invertase.firebase.RNFirebasePackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.facebook.react.ReactNativeHost;
@@ -32,7 +31,6 @@ public class MainApplication extends Application implements ReactApplication {
             new RNGoogleSigninPackage(),
             new VectorIconsPackage(),
             new FacebookLoginPackage(),
-            new SvgPackage(),
             new RNFirebasePackage(),
             new FBSDKPackage()
       );

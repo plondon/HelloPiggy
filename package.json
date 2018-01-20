@@ -40,7 +40,7 @@
     "react-native-firebase": "^3.1.0",
     "react-native-google-signin": "^0.12.0",
     "react-native-plaid-link": "^1.1.0",
-    "react-native-svg": "^6.0.1-rc.1",
+    "react-native-svg": "^6.0.1-rc.3",
     "react-native-tableview": "git@github.com:aksonov/react-native-tableview.git#1bd104f5e005bd78b977afaa37f6189eba78e48c",
     "react-native-vector-icons": "^4.4.3",
     "react-redux": "^5.0.6",
