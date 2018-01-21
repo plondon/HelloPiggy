@@ -107,6 +107,11 @@ export default class Plaid extends React.Component {
               {accountsView}
             </Section>
           </TableView>
+          <TableView style={styles.tableView} fontSize={14}>
+            <Section>
+              <Item>Done</Item>
+            </Section>
+          </TableView>
         </View>
       )
     }
