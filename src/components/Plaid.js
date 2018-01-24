@@ -1,9 +1,11 @@
 import React from 'react'
 import axios from 'axios'
 import R from 'ramda'
+import { connect } from 'react-redux'
 import * as firebase from 'firebase'
 import TableView from 'react-native-tableview'
 import PlaidAuthenticator from 'react-native-plaid-link'
+import { routeTo } from '../actions'
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
 
 const { Item, Section } = TableView
@@ -11,7 +13,7 @@ const { Item, Section } = TableView
 var authorize = 'https://hellopiggy.fun/auth'
 var getAccessToken = 'https://hellopiggy.fun/get_access_token'
 
-export default class Plaid extends React.Component {
+class Plaid extends React.Component {
   constructor () {
     super()
     this.state = {
@@ -109,7 +111,7 @@ export default class Plaid extends React.Component {
           </TableView>
           <TableView style={styles.tableView} fontSize={14}>
             <Section>
-              <Item>Done</Item>
+              <Item onPress={() => this.props.dispatch(routeTo('Settings'))}>Done</Item>
             </Section>
           </TableView>
         </View>
@@ -137,6 +139,8 @@ export default class Plaid extends React.Component {
     }
   }
 }
+
+export default connect()(Plaid)
 
 const styles = StyleSheet.create({
   container: {
