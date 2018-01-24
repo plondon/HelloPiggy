@@ -15,7 +15,6 @@ Round 2 Features
 - [x] Redux and redux-saga
 
 Round 3 Features
-- [ ] Branding / Login page cleanup
 - [x] TabBar
 - [x] Loading states
 - [x] Color Palette
@@ -26,6 +25,7 @@ Round 3 Features
 Round 4 Features
 - [x] Consider changing UserStats to 'Settings'
 - [ ] "More" Tab (See Tomorrow)
+- [ ] Branding / Login page cleanup
 - [ ] Make landing page on hellopiggy.fun
 - [ ] Replace plaid with free service
 - [ ] Transitions
