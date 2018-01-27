@@ -5,6 +5,7 @@ const CHECK_ACTIVE_USER = 'CHECK_ACTIVE_USER'
 const HANDLE_TRANSACTIONS = 'HANDLE_TRANSACTIONS'
 const FETCH_TX_SUCCESS = 'FETCH_TX_SUCCESS'
 
+const GET_SNAPSHOT = 'GET_SNAPSHOT'
 const UPDATE_USER = 'UPDATE_USER'
 const HANDLE_FACEBOOK_LOGIN = 'HANDLE_FACEBOOK_LOGIN'
 const HANDLE_GOOGLE_LOGIN = 'HANDLE_GOOGLE_LOGIN'
@@ -44,6 +45,11 @@ export const handleTransactions = (opts) => ({
 export const fetchTxSuccess = (opts) => ({
   type: FETCH_TX_SUCCESS,
   data: opts.data
+})
+
+export const getSnapshot = (user) => ({
+  type: GET_SNAPSHOT,
+  data: { user }
 })
 
 export const updateUser = (user, settings) => ({

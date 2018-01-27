@@ -5,8 +5,8 @@ import { connect } from 'react-redux'
 import * as firebase from 'firebase'
 import TableView from 'react-native-tableview'
 import PlaidAuthenticator from 'react-native-plaid-link'
-import { routeTo } from '../actions'
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
+import { routeTo, getSnapshot } from '../actions'
+import { Alert, View, Text, StyleSheet, ActivityIndicator } from 'react-native'
 
 const { Item, Section } = TableView
 
@@ -41,13 +41,22 @@ class Plaid extends React.Component {
   }
 
   getAuthorization (token, accounts) {
+    let user = firebase.auth().currentUser
     axios({
       method: 'get',
       url: authorize,
       params: {
         access_token: token
       }
-    }).then((res) => this.setState({ activity: false, data: res.data, accounts: accounts || [] }))
+    }).then((res) => {
+      if (res.data.error) {
+        this.setPlaidToken(null)
+        Alert.alert(res.data.error)
+        this.props.dispatch(getSnapshot(user))
+      } else {
+        this.setState({ activity: false, data: res.data, accounts: accounts || [] })
+      }
+    })
   }
 
   getAccessToken (token) {
@@ -140,7 +149,12 @@ class Plaid extends React.Component {
   }
 }
 
-export default connect()(Plaid)
+const mapStateToProps = state => ({
+  user: state.dataReducer.user,
+  activity: state.dataReducer.isFetching
+})
+
+export default connect(mapStateToProps)(Plaid)
 
 const styles = StyleSheet.create({
   container: {

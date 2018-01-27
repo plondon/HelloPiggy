@@ -84,6 +84,16 @@ export function * watchUpdateUser () {
   yield takeEvery('UPDATE_USER', handleUpdateUser)
 }
 
+export function * handleGetSnapshot (opts) {
+  const snapshot = yield call(getSnapshot, opts.data.user)
+  const currentUser = snapshot.val()
+  yield put(fetchUserSuccess(currentUser))
+}
+
+export function * watchGetSnapshot () {
+  yield takeEvery('GET_SNAPSHOT', handleGetSnapshot)
+}
+
 export function * handleTransactions (opts) {
   yield put(fetchData())
   const txs = yield call(getTransactions, opts)
@@ -101,6 +111,7 @@ export function * watchHandleTransactions () {
 export default function * rootSaga () {
   yield all([
     watchUpdateUser(),
+    watchGetSnapshot(),
     watchCheckActiveUser(),
     watchHandleFacebookLogin(),
     watchHandleGoogleLogin(),

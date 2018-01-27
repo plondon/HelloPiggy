@@ -51,8 +51,8 @@ class Overview extends React.Component {
       let payPeriodExpenses = expenses / conversion
 
       let totalTarget = netIncome - payPeriodGoal - payPeriodExpenses
-      // TODO: Remove this -1000 and replace with "Add Payment" option.
-      let totalTransactions = transactions.filter((tx) => tx.amount > -1000)
+      // TODO: Remove this and replace with "Add Payment" option.
+      let totalTransactions = transactions.filter((tx) => tx.amount > 0)
       let totalTransactionsToday = totalTransactions.filter((tx) => tx.date === today.format('YYYY-MM-DD'))
       let totalTransactionsMinusToday = totalTransactions.filter((tx) => tx.date !== today.format('YYYY-MM-DD'))
 
